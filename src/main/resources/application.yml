@@ -1,0 +1,26 @@
+spring:
+  config:
+    import:
+      - api-config.yml
+      - app-config.yml
+      - persistence-config.yml
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+
+logging:
+  level:
+    kkomo: DEBUG
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+logging:
+  level:
+    kkomo: DEBUG

@@ -1,0 +1,11 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: kkomo-server
+    env_file:
+      - ${ENV_FILE}
+    ports:
+      - ${SPRING_PORT}:${SPRING_PORT}
+    restart: always
