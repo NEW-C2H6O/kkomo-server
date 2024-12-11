@@ -19,7 +19,7 @@ logging:
 spring:
   config:
     activate:
-      on-profile: dev
+      on-profile: main
 
 logging:
   level:

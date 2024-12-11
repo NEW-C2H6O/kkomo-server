@@ -1,0 +1,77 @@
+name: deploy
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    environment: main
+    runs-on: ubuntu-latest
+
+    permissions:
+      checks: write
+      pull-requests: write
+      id-token: write
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK21
+        uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: 21
+
+      - name: Create environment variable file
+        run: |
+          touch .env.main
+          echo "${{ secrets.ENV }}" >> .env.main
+
+      - name: Cache Gradle packages
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+
+      - name: Build with Gradle
+        run: ./build.sh .env.main
+
+      - name: Publish unit test results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: build/test-results/**/*.xml
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build, tag, and push docker image to Amazon ECR
+        run: |
+          docker compose --env-file .env.main build
+          docker compose --env-file .env.main push
+
+      - name: Send docker-compose.yml and environment variable file
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          key: ${{ secrets.AWS_EC2_SSH_KEY }}
+          host: ${{ secrets.AWS_EC2_HOST }}
+          username: ${{ secrets.AWS_EC2_USERNAME }}
+          source: "docker-compose.yml, .env.main"
+          target: "/home/ubuntu/"
+
+      - name: Run docker image at Amazon EC2
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          key: ${{ secrets.AWS_EC2_SSH_KEY }}
+          host: ${{ secrets.AWS_EC2_HOST }}
+          username: ${{ secrets.AWS_EC2_USERNAME }}
+          script: |
+            cd /home/ubuntu
+            docker compose --env-file .env.main pull
+            docker compose --env-file .env.main up -d

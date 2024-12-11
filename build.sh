@@ -1,8 +1,8 @@
 #!/bin/bash
 
-ENV_FILE=".env.local"
+ENV_FILE=$1
 
-echo "[local.sh] environment variable file: $ENV_FILE"
+echo "[build.sh] environment variable file: $ENV_FILE"
 
 # 환경 변수 파일이 존재하는지 확인
 if [ -f "$ENV_FILE" ]; then
@@ -19,21 +19,17 @@ if [ -f "$ENV_FILE" ]; then
         fi
     done < "$ENV_FILE"
 else
-    echo "[local.sh] $ENV_FILE not found."
+    echo "[build.sh] $ENV_FILE not found."
     exit 1
 fi
 
-echo "[local.sh] environment variable load complete"
+echo "[build.sh] environment variable load complete"
 
 ./gradlew clean build
 
 if [ $? -eq 0 ]; then
-    echo "[local.sh] build complete"
+    echo "[build.sh] build complete"
 else
-    echo "[local.sh] build failed. exit code: $?"
+    echo "[build.sh] build failed. exit code: $?"
     exit 1
 fi
-
-docker compose --env-file $ENV_FILE up -d --build
-
-echo "[local.sh] deploy complete"

@@ -9,3 +9,4 @@ services:
     ports:
       - ${SPRING_PORT}:${SPRING_PORT}
     restart: always
+    image: ${DOCKER_IMAGE}:latest
