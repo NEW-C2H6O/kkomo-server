@@ -2,6 +2,7 @@ package kkomo.member.domain;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import kkomo.global.domain.BaseEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -9,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "member")
 @NoArgsConstructor
-public class Member {
+public class Member extends BaseEntity {
 
     @Id
     @Column(name = "member_id")

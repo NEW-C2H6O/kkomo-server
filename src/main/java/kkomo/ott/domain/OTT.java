@@ -20,4 +20,3 @@ public class OTT {
     @NotNull
     private String name;
 }
-

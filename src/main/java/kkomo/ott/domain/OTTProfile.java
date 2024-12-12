@@ -24,4 +24,3 @@ public class OTTProfile {
     @JoinColumn(name = "ott_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private OTT ott;
 }
-

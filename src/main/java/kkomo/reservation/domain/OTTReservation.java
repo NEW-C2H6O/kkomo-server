@@ -2,6 +2,7 @@ package kkomo.reservation.domain;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import kkomo.global.domain.BaseEntity;
 import kkomo.member.domain.Member;
 import kkomo.ott.domain.OTT;
 import kkomo.ott.domain.OTTProfile;
@@ -14,11 +15,12 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor
 @Table(name = "ott_reservation")
-public class OTTReservation {
+public class OTTReservation extends BaseEntity {
 
     @Id
+    @Column(name = "reservation_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long reservationId;
+    private Long id;
 
     @NotNull
     @Column(name = "start_time")
@@ -40,4 +42,3 @@ public class OTTReservation {
     @JoinColumn(name = "profile_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private OTTProfile profile;
 }
-
