@@ -12,8 +12,9 @@ import lombok.NoArgsConstructor;
 public class OTT {
 
     @Id
+    @Column(name = "ott_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long ottId;
+    private Long id;
 
     @Column
     @NotNull
