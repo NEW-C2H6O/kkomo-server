@@ -5,6 +5,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Entity
 @NoArgsConstructor
@@ -19,4 +22,7 @@ public class OTT {
     @Column
     @NotNull
     private String name;
+
+    @OneToMany(mappedBy = "ott")
+    private List<OTTProfile> profiles = new ArrayList<>();
 }
