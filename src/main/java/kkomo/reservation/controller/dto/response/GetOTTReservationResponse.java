@@ -1,10 +1,10 @@
 package kkomo.reservation.controller.dto.response;
 
-import kkomo.global.controller.dto.ReservationTimeDto;
+import kkomo.reservation.controller.dto.OTTReservationTimeDto;
 
 public record GetOTTReservationResponse(
     Long ottId,
     Long profileId,
-    ReservationTimeDto time
+    OTTReservationTimeDto time
 ) {
 }
