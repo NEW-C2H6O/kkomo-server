@@ -1,9 +1,10 @@
 package kkomo.ott.controller;
 
 import kkomo.global.ApiResponse;
-import kkomo.reservation.controller.dto.OTTReservationTimeDto;
 import kkomo.ott.controller.dto.response.GetOTTAndProfileResponse;
 import kkomo.ott.service.OTTService;
+import kkomo.reservation.controller.dto.OTTReservationTimeDto;
+import kkomo.reservation.domain.OTTReservationTime;
 import kkomo.reservation.service.OTTReservationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static kkomo.global.ApiResponse.ApiSuccessResult;
@@ -39,6 +41,19 @@ public class OTTController {
     ) {
         final List<OTTReservationTimeDto> response = ottReservationService.readBy(ottId, profileId, date).stream()
                 .map(OTTReservationTimeDto::from)
+                .toList();
+        return ApiResponse.success(HttpStatus.OK, response);
+    }
+
+    @GetMapping("/available")
+    public ResponseEntity<ApiSuccessResult<List<GetOTTAndProfileResponse>>> getAvailableOTTAndProfile(
+        @RequestParam(required = false) final String ott,
+        @RequestParam final LocalDateTime start,
+        @RequestParam final LocalDateTime end
+    ) {
+        final OTTReservationTime time = OTTReservationTime.of(start, end);
+        final List<GetOTTAndProfileResponse> response = ottService.readAvailable(ott, time).stream()
+                .map(GetOTTAndProfileResponse::from)
                 .toList();
         return ApiResponse.success(HttpStatus.OK, response);
     }
