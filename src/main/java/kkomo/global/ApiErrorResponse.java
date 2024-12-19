@@ -10,9 +10,9 @@ public class ApiErrorResponse {
 
     public static ResponseEntity<ApiErrorResult> error(
         final HttpStatus status,
-        final ErrorDescription... descriptions
+        final String... errors
     ) {
-        final ApiErrorResult result = new ApiErrorResult(status.value(), descriptions);
+        final ApiErrorResult result = new ApiErrorResult(status.value(), errors);
         return ResponseEntity.status(status).body(result);
     }
 
@@ -21,11 +21,11 @@ public class ApiErrorResponse {
     public static class ApiErrorResult {
 
         private final int status;
-        private final ErrorDescription[] errors;
+        private final String[] errors;
 
-        private ApiErrorResult(final int status, final ErrorDescription... descriptions) {
+        private ApiErrorResult(final int status, final String... messages) {
             this.status = status;
-            this.errors = descriptions;
+            this.errors = messages;
         }
     }
 }
