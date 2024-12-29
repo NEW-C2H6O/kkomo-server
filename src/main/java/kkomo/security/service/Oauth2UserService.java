@@ -11,6 +11,7 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -18,10 +19,10 @@ import org.springframework.stereotype.Service;
 public class Oauth2UserService extends DefaultOAuth2UserService {
 
     private final MemberRepository memberRepository;
-    private final HttpSession httpSession;
 
     //카카오로그인 후 후처리
     @Override
+    @Transactional
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
         log.debug("Loading user: {}", oAuth2User);
@@ -33,6 +34,7 @@ public class Oauth2UserService extends DefaultOAuth2UserService {
         Member existingMember = memberRepository.findByEmail(email)
                 .orElseGet(() -> registerMember((Map<String, Object>) attributes.get("properties"), email, userRequest.getClientRegistration().getClientName()));
 
+        log.debug("token {} : " , userRequest.getAccessToken());
         existingMember.updateAccessToken(userRequest.getAccessToken());
         memberRepository.save(existingMember);
 
@@ -42,14 +44,13 @@ public class Oauth2UserService extends DefaultOAuth2UserService {
     private Member registerMember(Map<String, Object> attributes, String email, String provider) {
         int tagCount = getTagCount(attributes);
         log.debug("attributes: {}", attributes);
-        Member member = Member.builder()
+        return Member.builder()
                 .name((String) attributes.get("nickname"))
                 .tag(tagCount + 1)
                 .email(email)
                 .profileImage((String) attributes.get("profile_image"))
                 .provider(provider)
                 .build();
-        return memberRepository.save(member);
     }
 
     private int getTagCount(Map<String, Object> attributes) {

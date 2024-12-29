@@ -20,12 +20,12 @@ spring:
       client:
         registration:
           kakao:
-            client-id: ${CLIENT_ID}
+            client-id: ${KAKAO_CLIENT_ID}
             authorization-grant-type: authorization_code
             client-authentication-method: client_secret_post
-            redirect-uri: ${REDIRECT_URI}
+            redirect-uri: ${KAKAO_REDIRECT_URI}
             client-name: kakao
-            client-secret: ${CLIENT_SECRET}
+            client-secret: ${KAKAO_CLIENT_SECRET}
             scope:
               - profile_nickname
               - profile_image
