@@ -1,0 +1,4 @@
+ALTER TABLE member
+    ADD email VARCHAR(255) NOT NULL;
+ALTER TABLE member
+    ADD member_role VARCHAR(255) NOT NULL;
