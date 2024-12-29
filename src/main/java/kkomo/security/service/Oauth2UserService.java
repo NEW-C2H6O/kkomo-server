@@ -53,7 +53,6 @@ public class Oauth2UserService extends DefaultOAuth2UserService {
     }
 
     private int getTagCount(Map<String, Object> attributes) {
-        int tagCount = memberRepository.countByName((String) attributes.get("nickname"));
-        return tagCount;
+        return memberRepository.countByName((String) attributes.get("nickname"));
     }
 }
