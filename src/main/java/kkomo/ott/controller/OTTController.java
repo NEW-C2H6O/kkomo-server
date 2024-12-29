@@ -47,12 +47,12 @@ public class OTTController {
 
     @GetMapping("/available")
     public ResponseEntity<ApiSuccessResult<List<GetOTTAndProfileResponse>>> getAvailableOTTAndProfile(
-        @RequestParam(required = false) final String ott,
+        @RequestParam(required = false) final Long ottId,
         @RequestParam final LocalDateTime start,
         @RequestParam final LocalDateTime end
     ) {
         final OTTReservationTime time = OTTReservationTime.of(start, end);
-        final List<GetOTTAndProfileResponse> response = ottService.readAvailable(ott, time).stream()
+        final List<GetOTTAndProfileResponse> response = ottService.readAvailable(ottId, time).stream()
                 .map(GetOTTAndProfileResponse::from)
                 .toList();
         return ApiResponse.success(HttpStatus.OK, response);

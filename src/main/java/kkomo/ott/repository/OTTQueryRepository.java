@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface OTTQueryRepository  {
 
-    List<OTT> findAvailableBy(String ottName, OTTReservationTime time);
+    List<OTT> findAvailableBy(Long ottId, OTTReservationTime time);
 }
