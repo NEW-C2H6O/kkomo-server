@@ -28,8 +28,8 @@ public class Member extends BaseEntity {
     @NotNull
     private String email;
 
-    @Enumerated(EnumType.STRING)
     @NotNull
+    @Enumerated(EnumType.STRING)
     private MemberRole role;
 
     private String profileImage;
@@ -41,7 +41,7 @@ public class Member extends BaseEntity {
     private String refreshToken;
 
     @Builder
-    public Member(String name, int tag, String email, String profileImage,String provider) {
+    public Member(String name, int tag, String email, String profileImage, String provider) {
         this.name = name;
         this.tag = tag;
         this.email = email;
