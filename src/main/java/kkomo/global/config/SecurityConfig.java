@@ -45,7 +45,10 @@ public class SecurityConfig {
                                 userInfoEndpoint.userService(oauth2UserService)
                         )
                 )
-                .sessionManagement(Customizer.withDefaults());
+                .sessionManagement(sessionManagement -> sessionManagement
+                        .sessionFixation().newSession()
+                        .maximumSessions(1)
+                        .expiredUrl("/login?expired"));
         return http.build();
     }
 }
