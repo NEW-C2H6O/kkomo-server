@@ -27,8 +27,7 @@ class OTTQueryDslRepository extends QueryDslSupport implements OTTQueryRepositor
                     .and(reservation.profile.eq(profile))
                     .and(reservation.time.start.goe(time.getStart()))
                     .and(reservation.time.end.loe(time.getEnd())))
-                .where(ottNameEq(ottName)
-                    .and(reservation.id.isNull()))
+                .where(ottNameEq(ottName), reservation.id.isNull())
                 .fetch();
     }
 
