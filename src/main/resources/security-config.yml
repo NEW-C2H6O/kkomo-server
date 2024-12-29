@@ -1,0 +1,63 @@
+spring:
+  security:
+    oauth2:
+      client:
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: ${KAKAO_CLIENT_ID}
+            authorization-grant-type: authorization_code
+            client-authentication-method: client_secret_post
+            redirect-uri: ${KAKAO_REDIRECT_URI}
+            client-name: kakao
+            client-secret: ${KAKAO_CLIENT_SECRET}
+            scope:
+              - profile_nickname
+              - profile_image
+              - account_email
+
+
+
+logging:
+  level:
+    kkomo: DEBUG
+
+---
+spring:
+  config:
+    activate:
+      on-profile: main
+
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: ${CLIENT_ID}
+            authorization-grant-type: authorization_code
+            redirect-uri: ${REDIRECT_URI}
+            client-authentication-method: client_secret_post
+            client-secret: ${CLIENT_SECRET}
+            scope:
+              - profile_nickname
+              - profile_image
+              - account_email
+
+logging:
+  level:
+    kkomo: DEBUG
