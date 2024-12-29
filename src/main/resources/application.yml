@@ -4,6 +4,7 @@ spring:
       - api-config.yml
       - app-config.yml
       - persistence-config.yml
+      - security-config.yml
 
 ---
 spring:
