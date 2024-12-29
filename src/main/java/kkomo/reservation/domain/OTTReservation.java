@@ -5,13 +5,14 @@ import kkomo.global.domain.BaseEntity;
 import kkomo.member.domain.Member;
 import kkomo.ott.domain.OTT;
 import kkomo.ott.domain.OTTProfile;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @Entity
-@NoArgsConstructor
+@Builder
 @Table(name = "ott_reservation")
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OTTReservation extends BaseEntity {
 
     @Id
