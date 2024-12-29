@@ -19,7 +19,7 @@ class OTTQueryDslRepository extends QueryDslSupport implements OTTQueryRepositor
     private static final QOTTReservation reservation = QOTTReservation.oTTReservation;
 
     @Override
-    public List<OTT> findAvailableBy(final String ottName, final OTTReservationTime time) {
+    public List<OTT> findAvailableBy(final Long ottId, final OTTReservationTime time) {
         return queryFactory.select(ott)
                 .from(ott)
                 .join(ott.profiles, profile).fetchJoin()
@@ -27,11 +27,11 @@ class OTTQueryDslRepository extends QueryDslSupport implements OTTQueryRepositor
                     .and(reservation.profile.eq(profile))
                     .and(reservation.time.start.goe(time.getStart()))
                     .and(reservation.time.end.loe(time.getEnd())))
-                .where(ottNameEq(ottName), reservation.id.isNull())
+                .where(ottIdEq(ottId), reservation.id.isNull())
                 .fetch();
     }
 
-    private BooleanExpression ottNameEq(final String ottName) {
-        return ottName == null ? null : ott.name.eq(ottName);
+    private BooleanExpression ottIdEq(final Long ottId) {
+        return ottId == null ? null : ott.id.eq(ottId);
     }
 }

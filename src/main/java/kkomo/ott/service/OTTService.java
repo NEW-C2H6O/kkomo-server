@@ -23,12 +23,12 @@ public class OTTService {
     }
 
     public List<OTT> readAvailable(
-        final String ott,
+        final Long ottId,
         final OTTReservationTime time
     ) {
         if (time.getStart().isAfter(time.getEnd())) {
             throw new IllegalArgumentException("올바르지 않은 예약 시간입니다.");
         }
-        return ottQueryRepository.findAvailableBy(ott, time);
+        return ottQueryRepository.findAvailableBy(ottId, time);
     }
 }
