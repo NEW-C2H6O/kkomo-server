@@ -17,45 +17,43 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers(
-                                "/swagger-ui/**",
-                                "/swagger-resources",
-                                "/actuator/**",
-                                "/test/signup",
-                                "/",
-                                "/ws/**",
-                                "/auth/login/**",
-                                "/oauth2/**"
-
-                        )
-                        .permitAll()
-                        .requestMatchers(
-                                "/ott/**",
-                                "/reservations/**"
-                        )
-                        .hasRole("ACTIVATED")
-                        .requestMatchers(
-                                "/admin/**"
-                        )
-                        .hasRole("ADMIN")
-                        .anyRequest()
-                        .authenticated()
+        http.csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests((authorize) -> authorize
+                .requestMatchers(
+                    "/swagger-ui/**",
+                    "/swagger-resources",
+                    "/actuator/**",
+                    "/test/signup",
+                    "/",
+                    "/ws/**",
+                    "/auth/login/**",
+                    "/oauth2/**",
+                    "/reservations/**"
                 )
-                .oauth2Login(oauth2 -> oauth2
-                        .failureUrl("/login?error")
-                        .redirectionEndpoint(redirection -> redirection
-                                .baseUri("/login/oauth2/code/kakao"))
-                        .userInfoEndpoint(userInfoEndpoint ->
-                                userInfoEndpoint.userService(oauth2UserService)
-                        )
+                .permitAll()
+                .requestMatchers(
+                    "/ott/**"
                 )
-                .sessionManagement(sessionManagement -> sessionManagement
-                        .sessionFixation().newSession()
-                        .maximumSessions(1)
-                        .expiredUrl("/login?expired"));
+                .hasRole("ACTIVATED")
+                .requestMatchers(
+                    "/admin/**"
+                )
+                .hasRole("ADMIN")
+                .anyRequest()
+                .authenticated()
+            )
+            .oauth2Login(oauth2 -> oauth2
+                .failureUrl("/login?error")
+                .redirectionEndpoint(redirection -> redirection
+                    .baseUri("/login/oauth2/code/kakao"))
+                .userInfoEndpoint(userInfoEndpoint ->
+                    userInfoEndpoint.userService(oauth2UserService)
+                )
+            )
+            .sessionManagement(sessionManagement -> sessionManagement
+                .sessionFixation().newSession()
+                .maximumSessions(1)
+                .expiredUrl("/login?expired"));
         return http.build();
     }
 }
