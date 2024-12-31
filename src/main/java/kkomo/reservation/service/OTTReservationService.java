@@ -71,4 +71,8 @@ public class OTTReservationService {
 
         ottReservationRepository.save(reservation);
     }
+
+    public List<OTTReservation> readMyBy(Long memberId) {
+        return ottReservationRepository.findByMember_Id(memberId);
+    }
 }

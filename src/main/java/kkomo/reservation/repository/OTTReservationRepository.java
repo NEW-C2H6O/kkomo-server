@@ -33,4 +33,6 @@ public interface OTTReservationRepository extends JpaRepository<OTTReservation, 
         LocalDateTime start,
         LocalDateTime end
     );
+
+    List<OTTReservation> findByMember_Id(Long memberId);
 }
