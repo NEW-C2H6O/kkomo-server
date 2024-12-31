@@ -3,6 +3,7 @@ package kkomo.reservation.controller;
 import kkomo.global.ApiResponse;
 import kkomo.reservation.controller.dto.request.ReserveOTTRequest;
 import kkomo.reservation.controller.dto.response.GetOTTReservationResponse;
+import kkomo.reservation.controller.dto.response.ReserveOTTResponse;
 import kkomo.reservation.domain.OTTReservation;
 import kkomo.reservation.service.OTTReservationService;
 import kkomo.reservation.service.command.ReserveOTTCommand;
@@ -24,14 +25,15 @@ public class OTTReservationController {
     private final OTTReservationService ottReservationService;
 
     @PostMapping
-    public ResponseEntity<ApiSuccessResult<?>> reserveOTT(
+    public ResponseEntity<ApiSuccessResult<ReserveOTTResponse>> reserveOTT(
         @RequestBody final ReserveOTTRequest request
     ) {
         // TODO: 세션을 통해 memberId를 가져오는 로직 추가 구현 필요
         final Long memberId = 1L;
         final ReserveOTTCommand command = mapper.mapToCommand(memberId, request);
-        ottReservationService.reserve(command);
-        return ApiResponse.success(HttpStatus.CREATED);
+        final Long reservationId = ottReservationService.reserve(command);
+        final ReserveOTTResponse response = ReserveOTTResponse.of(reservationId);
+        return ApiResponse.success(HttpStatus.CREATED, response);
     }
 
     @GetMapping("/me")
