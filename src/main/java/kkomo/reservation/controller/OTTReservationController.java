@@ -7,10 +7,7 @@ import kkomo.reservation.service.command.ReserveOTTCommand;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,5 +26,15 @@ public class OTTReservationController {
         final ReserveOTTCommand command = mapper.mapToCommand(memberId, request);
         ottReservationService.reserve(command);
         return ApiResponse.success(HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/{reservationId}")
+    public ResponseEntity<ApiResponse.ApiSuccessResult<?>> cancelOTT(
+        @PathVariable final Long reservationId
+    ) {
+        // TODO: 세션을 통해 memberId를 가져오는 로직 추가 구현 필요
+        final Long memberId = 1L;
+        ottReservationService.cancel(reservationId, memberId);
+        return ApiResponse.success(HttpStatus.NO_CONTENT);
     }
 }

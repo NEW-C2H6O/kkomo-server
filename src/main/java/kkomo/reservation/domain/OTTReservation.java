@@ -34,4 +34,8 @@ public class OTTReservation extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "profile_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private OTTProfile profile;
+
+    public boolean isHolder(final Long memberId) {
+        return member.getId().equals(memberId);
+    }
 }
