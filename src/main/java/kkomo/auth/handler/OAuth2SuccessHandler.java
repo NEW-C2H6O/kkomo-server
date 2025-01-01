@@ -17,8 +17,11 @@ import org.springframework.stereotype.Component;
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-                                        Authentication authentication) throws IOException, ServletException {
+    public void onAuthenticationSuccess(
+        HttpServletRequest request, 
+        HttpServletResponse response,
+        Authentication authentication
+    ) throws IOException, ServletException {
         OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
 
         log.info("Successfully authenticated user {}", oauth2User.getName());
@@ -29,6 +32,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         Cookie sessionCookie = new Cookie("JSESSIONID", session.getId());
         sessionCookie.setPath("/");
         sessionCookie.setHttpOnly(true);
+        
         response.addCookie(sessionCookie);
     }
 }
