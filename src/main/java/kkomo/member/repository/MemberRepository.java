@@ -4,8 +4,6 @@ import jakarta.validation.constraints.NotNull;
 import java.util.Optional;
 import kkomo.member.domain.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository

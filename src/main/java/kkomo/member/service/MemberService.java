@@ -15,7 +15,7 @@ public class MemberService {
     public Member registerMember(Map<String,Object> attributes, String email, String provider) {
 
         String name = (String) attributes.get("nickname");
-        String profileImage = (String) attributes.get("profileImage");
+        String profileImage = (String) attributes.get("profile_image");
 
         int tagCount = getTagCount(name);
 

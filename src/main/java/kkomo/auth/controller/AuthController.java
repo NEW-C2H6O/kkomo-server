@@ -14,8 +14,6 @@ import org.springframework.web.servlet.view.RedirectView;
 @RequestMapping("/auth")
 @Slf4j
 public class AuthController {
-    private final AuthService authService;
-    private final HttpServletRequest request;
 
     @PostMapping("/login")
     public RedirectView login() {
