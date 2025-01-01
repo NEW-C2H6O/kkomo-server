@@ -40,6 +40,17 @@ public class OTTReservationController {
         return ApiResponse.success(HttpStatus.CREATED, response);
     }
 
+
+    @DeleteMapping("/{reservationId}")
+    public ResponseEntity<ApiResponse.ApiSuccessResult<?>> cancelOTT(
+        @PathVariable final Long reservationId
+    ) {
+        // TODO: 세션을 통해 memberId를 가져오는 로직 추가 구현 필요
+        final Long memberId = 1L;
+        ottReservationService.cancel(reservationId, memberId);
+        return ApiResponse.success(HttpStatus.NO_CONTENT);
+    }
+
     @GetMapping("/me")
     public ResponseEntity<ApiSuccessResult<SliceResponse<GetOTTReservationResponse>>> getMyOTTReservation(
         @CursorDefault @PageableDefault final CursorPageable<Cursor> pageable

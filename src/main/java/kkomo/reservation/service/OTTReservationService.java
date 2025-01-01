@@ -10,11 +10,13 @@ import kkomo.reservation.domain.OTTReservationTime;
 import kkomo.reservation.repository.OTTReservationRepository;
 import kkomo.reservation.service.command.ReserveOTTCommand;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -57,5 +59,16 @@ public class OTTReservationService {
         ottReservationRepository.save(reservation);
 
         return reservation.getId();
+    }
+
+    @Transactional
+    public void cancel(final Long reservationId, final Long memberId) {
+        final OTTReservation reservation = ottReservationRepository.findById(reservationId)
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 예약 내역입니다."));
+        if (!reservation.isHolder(memberId)) {
+            throw new IllegalArgumentException("예약자 본인이 아닙니다.");
+        }
+        ottReservationRepository.delete(reservation);
+        log.info("예약이 취소되었습니다. [reservationId: {}, memberId: {}]", reservationId, memberId);
     }
 }
