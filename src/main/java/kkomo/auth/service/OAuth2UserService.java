@@ -1,10 +1,10 @@
-package kkomo.security.service;
+package kkomo.auth.service;
 
 import java.util.Map;
 import kkomo.member.domain.Member;
 import kkomo.member.repository.MemberRepository;
 import kkomo.member.service.MemberService;
-import kkomo.security.UserPrincipal;
+import kkomo.auth.UserPrincipal;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;

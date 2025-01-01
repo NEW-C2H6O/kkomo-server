@@ -1,8 +1,8 @@
 package kkomo.global.config;
 
-import kkomo.security.CustomAuthenticationEntryPoint;
-import kkomo.security.handler.OAuth2SuccessHandler;
-import kkomo.security.service.OAuth2UserService;
+import kkomo.auth.CustomAuthenticationEntryPoint;
+import kkomo.auth.handler.OAuth2SuccessHandler;
+import kkomo.auth.service.OAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;

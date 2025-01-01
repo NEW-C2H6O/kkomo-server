@@ -1,7 +1,7 @@
 package kkomo.auth.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
-import kkomo.auth.AuthService;
+import kkomo.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;

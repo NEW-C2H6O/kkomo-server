@@ -1,4 +1,4 @@
-package kkomo.security;
+package kkomo.auth;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

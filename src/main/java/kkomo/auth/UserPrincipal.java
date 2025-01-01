@@ -1,4 +1,4 @@
-package kkomo.security;
+package kkomo.auth;
 
 import java.util.Collection;
 import java.util.Map;

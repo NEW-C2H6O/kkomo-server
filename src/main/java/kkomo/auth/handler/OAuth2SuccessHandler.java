@@ -1,4 +1,4 @@
-package kkomo.security.handler;
+package kkomo.auth.handler;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
