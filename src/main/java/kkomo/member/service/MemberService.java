@@ -1,6 +1,5 @@
 package kkomo.member.service;
 
-import java.util.Map;
 import kkomo.member.domain.Member;
 import kkomo.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,13 +11,13 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
-    public Member registerMember(Map<String,Object> attributes, String email, String provider) {
-
-        String name = (String) attributes.get("nickname");
-        String profileImage = (String) attributes.get("profile_image");
-
+    public Member registerMember(
+        String name,
+        String profileImage,
+        String email,
+        String provider
+    ) {
         int tagCount = getTagCount(name);
-
         return Member.builder()
             .name(name)
             .tag(tagCount + 1)

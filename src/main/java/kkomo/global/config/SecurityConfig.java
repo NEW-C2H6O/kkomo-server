@@ -1,6 +1,7 @@
 package kkomo.global.config;
 
 import kkomo.auth.CustomAuthenticationEntryPoint;
+import kkomo.auth.handler.OAuth2FailureHandler;
 import kkomo.auth.handler.OAuth2SuccessHandler;
 import kkomo.auth.service.OAuth2UserService;
 import lombok.RequiredArgsConstructor;
@@ -19,21 +20,22 @@ public class SecurityConfig {
 
     private final OAuth2UserService oAuth2UserService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final OAuth2FailureHandler oAuth2FailureHandler;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests((authorize) -> authorize
+            .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(
                     "/swagger-ui/**",
                     "/swagger-resources",
                     "/actuator/**",
-                    "/test/signup",
                     "/",
                     "/ws/**",
                     "/oauth2/**",
-                    "/auth/login"
+                    "/auth/login",
+                    "/login"
                 )
                 .permitAll()
                 .requestMatchers(
@@ -50,12 +52,13 @@ public class SecurityConfig {
             )
             .oauth2Login(oauth2 -> oauth2
                 .redirectionEndpoint(redirection -> redirection
-                .baseUri("/login/oauth2/code/kakao"))
+                    .baseUri("/login/oauth2/code/kakao"))
                 .userInfoEndpoint(userInfoEndpoint ->
                     userInfoEndpoint.userService(oAuth2UserService)
                 )
                 .loginProcessingUrl("/auth/login")
                 .successHandler(oAuth2SuccessHandler)
+                .failureHandler(oAuth2FailureHandler)
             )
             .exceptionHandling(httpSecurityExceptionHandling ->
                     httpSecurityExceptionHandling.authenticationEntryPoint(customAuthenticationEntryPoint))
