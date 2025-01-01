@@ -13,8 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -25,18 +23,6 @@ public class OTTReservationService {
     private final OTTRepository ottRepository;
     private final MemberRepository memberRepository;
     private final OTTReservationRepository ottReservationRepository;
-
-    public List<OTTReservationTime> readBy(Long ottId, Long profileId, LocalDate date) {
-        final LocalDateTime start = date.atStartOfDay();
-        final LocalDateTime end = date.atTime(23, 59, 59);
-
-        return ottReservationRepository.findByOttIdAndProfileIdAndTimeBetween(
-            ottId,
-            profileId,
-            start,
-            end
-        );
-    }
 
     @Transactional
     public Long reserve(final ReserveOTTCommand command) {
