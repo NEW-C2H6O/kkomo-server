@@ -1,9 +1,10 @@
 package kkomo.security.service;
 
-import jakarta.servlet.http.HttpSession;
 import java.util.Map;
 import kkomo.member.domain.Member;
 import kkomo.member.repository.MemberRepository;
+import kkomo.member.service.MemberService;
+import kkomo.security.UserPrincipal;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -16,8 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class Oauth2UserService extends DefaultOAuth2UserService {
+public class OAuth2UserService extends DefaultOAuth2UserService {
 
+    private final MemberService memberService;
     private final MemberRepository memberRepository;
 
     //카카오로그인 후 후처리
@@ -31,29 +33,15 @@ public class Oauth2UserService extends DefaultOAuth2UserService {
         Map<String, Object> profile = (Map<String, Object>) attributes.get("kakao_account");
         String email = (String) profile.get("email");
 
+        log.info("Loading user: {}", attributes.get("properties"));
         Member existingMember = memberRepository.findByEmail(email)
-                .orElseGet(() -> registerMember((Map<String, Object>) attributes.get("properties"), email, userRequest.getClientRegistration().getClientName()));
+                .orElseGet(() -> memberService.registerMember((Map<String, Object>) attributes.get("properties"), email,
+                        userRequest.getClientRegistration().getClientName()));
 
-        log.debug("token {} : " , userRequest.getAccessToken());
-        existingMember.updateAccessToken(userRequest.getAccessToken());
+        log.debug("token {} : ", userRequest.getAccessToken());
+        existingMember.updateAccessToken(userRequest.getAccessToken().getTokenValue());
         memberRepository.save(existingMember);
 
-        return oAuth2User;
-    }
-
-    private Member registerMember(Map<String, Object> attributes, String email, String provider) {
-        int tagCount = getTagCount(attributes);
-        log.debug("attributes: {}", attributes);
-        return Member.builder()
-                .name((String) attributes.get("nickname"))
-                .tag(tagCount + 1)
-                .email(email)
-                .profileImage((String) attributes.get("profile_image"))
-                .provider(provider)
-                .build();
-    }
-
-    private int getTagCount(Map<String, Object> attributes) {
-        return memberRepository.countByName((String) attributes.get("nickname"));
+        return new UserPrincipal(oAuth2User, existingMember);
     }
 }

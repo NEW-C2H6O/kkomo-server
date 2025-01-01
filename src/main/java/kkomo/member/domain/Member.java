@@ -6,7 +6,6 @@ import kkomo.global.domain.BaseEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.security.oauth2.core.OAuth2AccessToken;
 
 @Getter
 @Entity
@@ -30,7 +29,7 @@ public class Member extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @NotNull
-    private MemberRole role;
+    private MemberRole role = MemberRole.ROLE_DEACTIVATED;
 
     private String profileImage;
 
@@ -47,10 +46,9 @@ public class Member extends BaseEntity {
         this.email = email;
         this.profileImage = profileImage;
         this.provider = provider;
-        this.role = MemberRole.ROLE_DEACTIVATED;  //회원 활성화 이후에 권한을 얻을 수 있다
     }
 
-    public void updateAccessToken(OAuth2AccessToken accessToken) {
-        this.accessToken = accessToken.getTokenValue();
+    public void updateAccessToken(String accessToken) {
+        this.accessToken = accessToken;
     }
 }

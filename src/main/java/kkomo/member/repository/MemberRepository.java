@@ -13,6 +13,5 @@ public interface MemberRepository extends JpaRepository<Member,Long> {
 
     Optional<Member> findByEmail(@NotNull String name);
 
-    @Query("SELECT COUNT(m) FROM Member m WHERE m.name = :name")
-    int countByName(@Param("name") String name);
+    int countByName(@NotNull String nickname);
 }
