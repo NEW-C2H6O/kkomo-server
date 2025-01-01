@@ -27,7 +27,6 @@ public class Member extends BaseEntity {
     @NotNull
     private String email;
 
-    @Enumerated(EnumType.STRING)
     @NotNull
     private MemberRole role = MemberRole.ROLE_DEACTIVATED;
 

@@ -25,4 +25,11 @@ public class OTT {
 
     @OneToMany(mappedBy = "ott")
     private List<OTTProfile> profiles = new ArrayList<>();
+
+    public OTTProfile getProfileBy(Long profileId) {
+        return profiles.stream()
+            .filter(profile -> profile.getId().equals(profileId))
+            .findFirst()
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 프로필입니다."));
+    }
 }
