@@ -2,6 +2,7 @@ package kkomo.admin.service;
 
 import kkomo.admin.domain.ActiveCode;
 import kkomo.admin.repository.ActiveCodeRepository;
+import kkomo.auth.UserPrincipal;
 import kkomo.member.domain.MemberRole;
 import kkomo.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +35,12 @@ public class AdminService {
     @Async
     public void invalidateAllSessions() {
         sessionRegistry.getAllPrincipals()
-            .forEach(principal -> sessionRegistry.getAllSessions(principal, false)
-                .forEach(SessionInformation::expireNow));
+            .stream()
+            .filter(UserPrincipal.class::isInstance)
+            .map(UserPrincipal.class::cast)
+            .filter(UserPrincipal::isActivated)
+            .forEach(principal ->
+                sessionRegistry.getAllSessions(principal, false)
+                    .forEach(SessionInformation::expireNow));
     }
 }
