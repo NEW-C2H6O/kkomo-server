@@ -1,5 +1,6 @@
 package kkomo.reservation.controller;
 
+import kkomo.auth.UserPrincipal;
 import kkomo.global.ApiResponse;
 import kkomo.global.support.Cursor;
 import kkomo.global.support.CursorDefault;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import static kkomo.global.ApiResponse.ApiSuccessResult;
@@ -30,33 +32,32 @@ public class OTTReservationController {
 
     @PostMapping
     public ResponseEntity<ApiSuccessResult<ReserveOTTResponse>> reserveOTT(
-        @RequestBody final ReserveOTTRequest request
+        @RequestBody final ReserveOTTRequest request,
+        @AuthenticationPrincipal final UserPrincipal principal
     ) {
-        // TODO: 세션을 통해 memberId를 가져오는 로직 추가 구현 필요
-        final Long memberId = 1L;
+        final Long memberId = principal.getId();
         final ReserveOTTCommand command = mapper.mapToCommand(memberId, request);
         final Long reservationId = ottReservationService.reserve(command);
         final ReserveOTTResponse response = ReserveOTTResponse.of(reservationId);
         return ApiResponse.success(HttpStatus.CREATED, response);
     }
 
-
     @DeleteMapping("/{reservationId}")
     public ResponseEntity<ApiResponse.ApiSuccessResult<?>> cancelOTT(
-        @PathVariable final Long reservationId
+        @PathVariable final Long reservationId,
+        @AuthenticationPrincipal final UserPrincipal principal
     ) {
-        // TODO: 세션을 통해 memberId를 가져오는 로직 추가 구현 필요
-        final Long memberId = 1L;
+        final Long memberId = principal.getId();
         ottReservationService.cancel(reservationId, memberId);
         return ApiResponse.success(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping("/me")
     public ResponseEntity<ApiSuccessResult<SliceResponse<GetOTTReservationResponse>>> getMyOTTReservation(
-        @CursorDefault @PageableDefault final CursorPageable<Cursor> pageable
+        @CursorDefault @PageableDefault final CursorPageable<Cursor> pageable,
+        @AuthenticationPrincipal final UserPrincipal principal
     ) {
-        // TODO: 세션을 통해 memberId를 가져오는 로직 추가 구현 필요
-        final Long memberId = 1L;
+        final Long memberId = principal.getId();
         final SliceResponse<GetOTTReservationResponse> response = ottReservationQueryService.readMyBy(memberId, pageable);
         return ApiResponse.success(HttpStatus.OK, response);
     }
