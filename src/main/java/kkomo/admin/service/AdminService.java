@@ -1,7 +1,7 @@
 package kkomo.admin.service;
 
-import kkomo.admin.domain.ActiveCode;
-import kkomo.admin.repository.ActiveCodeRepository;
+import kkomo.admin.domain.ActivityCode;
+import kkomo.admin.repository.ActivityCodeRepository;
 import kkomo.auth.UserPrincipal;
 import kkomo.member.domain.MemberRole;
 import kkomo.member.repository.MemberRepository;
@@ -19,15 +19,15 @@ public class AdminService {
 
     private final SessionRegistry sessionRegistry;
     private final MemberRepository memberRepository;
-    private final ActiveCodeRepository activeCodeRepository;
+    private final ActivityCodeRepository activityCodeRepository;
 
     @Transactional
-    public void publishActiveCode(final String codeValue) {
-        if (activeCodeRepository.existsByValue(codeValue)) {
+    public void publishActivityCode(final String codeValue) {
+        if (activityCodeRepository.existsByValue(codeValue)) {
             throw new IllegalArgumentException("이미 사용 중인 코드입니다.");
         }
-        final ActiveCode activeCode = ActiveCode.of(codeValue);
-        activeCodeRepository.save(activeCode);
+        final ActivityCode activityCode = ActivityCode.of(codeValue);
+        activityCodeRepository.save(activityCode);
         memberRepository.deactivateAllOf(MemberRole.ROLE_ACTIVATED);
         invalidateAllSessions();
     }

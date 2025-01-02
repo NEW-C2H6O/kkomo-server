@@ -1,9 +1,9 @@
 package kkomo.admin.repository;
 
-import kkomo.admin.domain.ActiveCode;
+import kkomo.admin.domain.ActivityCode;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ActiveCodeRepository extends JpaRepository<ActiveCode, Long> {
+public interface ActivityCodeRepository extends JpaRepository<ActivityCode, Long> {
 
     boolean existsByValue(String value);
 }

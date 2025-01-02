@@ -9,12 +9,12 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "active_code")
+@Table(name = "activity_code")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ActiveCode extends BaseEntity {
+public class ActivityCode extends BaseEntity {
 
     @Id
-    @Column(name = "active_code_id")
+    @Column(name = "activity_code_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -22,9 +22,9 @@ public class ActiveCode extends BaseEntity {
     @Column(name = "value", nullable = false)
     private String value;
 
-    public static ActiveCode of(final String value) {
-        ActiveCode activeCode = new ActiveCode();
-        activeCode.value = value;
-        return activeCode;
+    public static ActivityCode of(final String value) {
+        ActivityCode activityCode = new ActivityCode();
+        activityCode.value = value;
+        return activityCode;
     }
 }

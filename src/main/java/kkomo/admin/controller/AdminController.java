@@ -1,6 +1,6 @@
 package kkomo.admin.controller;
 
-import kkomo.admin.controller.dto.request.PublishActiveCodeRequest;
+import kkomo.admin.controller.dto.request.PublishActivityCodeRequest;
 import kkomo.admin.service.AdminService;
 import kkomo.global.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -20,12 +20,12 @@ public class AdminController {
 
     private final AdminService adminService;
 
-    @PostMapping("/active-code")
-    public ResponseEntity<ApiSuccessResult<?>> publishActiveCode(
-        @RequestBody final PublishActiveCodeRequest request
+    @PostMapping("/activity-code")
+    public ResponseEntity<ApiSuccessResult<?>> publishActivityCode(
+        @RequestBody final PublishActivityCodeRequest request
     ) {
         final String codeValue = request.code();
-        adminService.publishActiveCode(codeValue);
+        adminService.publishActivityCode(codeValue);
         return ApiResponse.success(HttpStatus.OK);
     }
 }
