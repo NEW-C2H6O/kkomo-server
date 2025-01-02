@@ -1,11 +1,14 @@
 package kkomo.auth;
 
-import java.util.Collection;
-import java.util.Map;
 import kkomo.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
 
 @RequiredArgsConstructor
 public class UserPrincipal implements OAuth2User {
@@ -29,7 +32,11 @@ public class UserPrincipal implements OAuth2User {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return oAuth2User.getAuthorities();
+        final Collection<GrantedAuthority> authorities = new HashSet<>(oAuth2User.getAuthorities());
+        final String role = member.getRole().name();
+        final SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role);
+        authorities.add(authority);
+        return authorities;
     }
 
     public Long getId() {
