@@ -47,4 +47,12 @@ public class UserPrincipal implements OAuth2User {
     public String getName() {
         return member.getName();
     }
+
+    @Override
+    public String toString() {
+        return String.format(
+            "Name: [%s], Granted Authorities: [%s], User Attributes: [%s]",
+            getName(), getAuthorities(), getAttributes()
+        );
+    }
 }
