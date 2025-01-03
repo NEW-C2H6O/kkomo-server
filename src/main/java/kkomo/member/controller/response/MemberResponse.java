@@ -6,4 +6,13 @@ public record MemberResponse(
     String name,
     String nameAndTag
 ) {
+
+    public static MemberResponse of(
+        Long memberId,
+        String profileImage,
+        String name,
+        String nameAndTag
+    ) {
+        return new MemberResponse(memberId, profileImage, name, nameAndTag);
+    }
 }

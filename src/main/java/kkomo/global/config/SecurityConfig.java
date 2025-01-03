@@ -49,7 +49,7 @@ public class SecurityConfig {
                     "/ott/**",
                     "/reservations/**"
                 )
-                .hasRole("ACTIVATED")
+                .hasAnyRole("ACTIVATED", "ADMIN")
                 .requestMatchers(
                     "/admin/**"
                 )

@@ -31,12 +31,16 @@ public abstract class QueryDslSupport {
         Assert.notNull(queryFactory, "QueryFactory must not be null.");
     }
 
-    protected boolean removeIfContentHasNext(final List<?> content, final int size) {
+    private boolean removeIfContentHasNext(final List<?> content, final int size) {
         if (content.size() > size) {
             content.remove(size);
             return true;
         }
         return false;
+    }
+
+    private boolean isFirst(final CursorPageable<? extends Cursor> pageable) {
+        return pageable.getCursor() == null;
     }
 
     protected <T> Slice<T> paginate(
@@ -45,7 +49,11 @@ public abstract class QueryDslSupport {
     ) {
         final List<T> mutable = new ArrayList<>(content);
         final int size = pageable.getPageSize();
-        boolean hasNext = removeIfContentHasNext(mutable, size);
-        return new SliceImpl<>(mutable, PageRequest.ofSize(size), hasNext);
+        final boolean hasNext = removeIfContentHasNext(mutable, size);
+        final PageRequest request = PageRequest.of(
+            isFirst(pageable) ? 0 : 1,
+            size
+        );
+        return new SliceImpl<>(mutable, request, hasNext);
     }
 }
