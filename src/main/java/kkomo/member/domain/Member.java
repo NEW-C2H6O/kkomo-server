@@ -75,4 +75,8 @@ public class Member extends BaseEntity {
     public boolean isDeactivated() {
         return role.isDeactivated();
     }
+
+    public String getNameAndTag() {
+        return name + "#" + tag;
+    }
 }
