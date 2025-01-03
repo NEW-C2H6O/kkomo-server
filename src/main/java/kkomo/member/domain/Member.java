@@ -59,4 +59,8 @@ public class Member extends BaseEntity {
     public void activate() {
         this.role = MemberRole.ROLE_ACTIVATED;
     }
+
+    public void assignAdmin() {
+        this.role = MemberRole.ROLE_ADMIN;
+    }
 }

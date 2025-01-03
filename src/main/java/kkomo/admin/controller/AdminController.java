@@ -1,5 +1,6 @@
 package kkomo.admin.controller;
 
+import kkomo.admin.controller.dto.request.AssignAdminRequest;
 import kkomo.admin.controller.dto.request.PublishActivityCodeRequest;
 import kkomo.admin.service.AdminService;
 import kkomo.global.ApiResponse;
@@ -26,6 +27,15 @@ public class AdminController {
     ) {
         final String codeValue = request.code();
         adminService.publishActivityCode(codeValue);
+        return ApiResponse.success(HttpStatus.OK);
+    }
+
+    @PostMapping
+    public ResponseEntity<ApiSuccessResult<?>> assignAdmin(
+        @RequestBody final AssignAdminRequest request
+    ) {
+        final Long memberId = request.memberId();
+        adminService.assignAdmin(memberId);
         return ApiResponse.success(HttpStatus.OK);
     }
 }
