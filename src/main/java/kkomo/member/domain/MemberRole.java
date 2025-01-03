@@ -6,4 +6,12 @@ public enum MemberRole {
     public boolean isActivated() {
         return this == ROLE_ACTIVATED;
     }
+
+    public boolean isAdmin() {
+        return this == ROLE_ADMIN;
+    }
+
+    public boolean isDeactivated() {
+        return this == ROLE_DEACTIVATED;
+    }
 }

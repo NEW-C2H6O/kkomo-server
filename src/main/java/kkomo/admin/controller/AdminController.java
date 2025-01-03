@@ -7,10 +7,7 @@ import kkomo.global.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static kkomo.global.ApiResponse.ApiSuccessResult;
 
@@ -37,5 +34,13 @@ public class AdminController {
         final Long memberId = request.memberId();
         adminService.assignAdmin(memberId);
         return ApiResponse.success(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{memberId}")
+    public ResponseEntity<ApiSuccessResult<?>> removeAdmin(
+        @PathVariable final Long memberId
+    ) {
+        adminService.removeAdmin(memberId);
+        return ApiResponse.success(HttpStatus.NO_CONTENT);
     }
 }

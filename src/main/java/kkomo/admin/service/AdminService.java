@@ -49,6 +49,26 @@ public class AdminService {
     public void assignAdmin(final Long memberId) {
         final Member member = memberRepository.findById(memberId)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+        if (member.isAdmin()) {
+            throw new IllegalArgumentException("이미 관리자인 회원입니다.");
+        }
+        if (member.isDeactivated()) {
+            throw new IllegalArgumentException("비활성화된 회원입니다.");
+        }
         member.assignAdmin();
+    }
+
+    @Transactional
+    public void removeAdmin(final Long memberId) {
+        int count = memberRepository.countByRole(MemberRole.ROLE_ADMIN);
+        if (count == 1) {
+            throw new IllegalArgumentException("관리자는 최소 한 명 이상 존재해야 합니다.");
+        }
+        final Member member = memberRepository.findById(memberId)
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+        if (!member.isAdmin()) {
+            throw new IllegalArgumentException("관리자가 아닌 회원입니다.");
+        }
+        member.removeAdmin();
     }
 }
