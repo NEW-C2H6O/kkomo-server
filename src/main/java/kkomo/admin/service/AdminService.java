@@ -3,6 +3,7 @@ package kkomo.admin.service;
 import kkomo.admin.domain.ActivityCode;
 import kkomo.admin.repository.ActivityCodeRepository;
 import kkomo.auth.UserPrincipal;
+import kkomo.member.domain.Member;
 import kkomo.member.domain.MemberRole;
 import kkomo.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -42,5 +43,12 @@ public class AdminService {
             .forEach(principal ->
                 sessionRegistry.getAllSessions(principal, false)
                     .forEach(SessionInformation::expireNow));
+    }
+
+    @Transactional
+    public void assignAdmin(final Long memberId) {
+        final Member member = memberRepository.findById(memberId)
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+        member.assignAdmin();
     }
 }
