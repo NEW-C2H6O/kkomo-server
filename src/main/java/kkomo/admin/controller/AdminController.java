@@ -30,7 +30,15 @@ public class AdminController {
     public ResponseEntity<ApiSuccessResult<SliceResponse<MemberResponseWithRole>>> getAdmins(
         @CursorDefault @PageableDefault final CursorPageable<Cursor> pageable
     ) {
-        final SliceResponse<MemberResponseWithRole> response = adminQueryService.readBy(pageable);
+        final SliceResponse<MemberResponseWithRole> response = adminQueryService.readAdminsBy(pageable);
+        return ApiResponse.success(HttpStatus.OK, response);
+    }
+
+    @GetMapping("/members")
+    public ResponseEntity<ApiSuccessResult<SliceResponse<MemberResponseWithRole>>> getMembers(
+        @CursorDefault @PageableDefault final CursorPageable<Cursor> pageable
+    ) {
+        final SliceResponse<MemberResponseWithRole> response = adminQueryService.readMembersBy(pageable);
         return ApiResponse.success(HttpStatus.OK, response);
     }
 
