@@ -63,4 +63,16 @@ public class Member extends BaseEntity {
     public void assignAdmin() {
         this.role = MemberRole.ROLE_ADMIN;
     }
+
+    public void removeAdmin() {
+        this.role = MemberRole.ROLE_ACTIVATED;
+    }
+
+    public boolean isAdmin() {
+        return role.isAdmin();
+    }
+
+    public boolean isDeactivated() {
+        return role.isDeactivated();
+    }
 }
