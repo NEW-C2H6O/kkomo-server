@@ -27,4 +27,8 @@ public class ActivityCode extends BaseEntity {
         activityCode.value = value;
         return activityCode;
     }
+
+    public boolean isSameValue(final String value) {
+        return this.value.equals(value);
+    }
 }
