@@ -20,12 +20,20 @@ public class AdminQueryService {
     private final MemberResponseWithRoleCursorService cursorService;
     private final MemberQueryRepository memberQueryRepository;
 
-    public SliceResponse<MemberResponseWithRole> readBy(
+    public SliceResponse<MemberResponseWithRole> readAdminsBy(
         final CursorPageable<? extends Cursor> pageable
     ) {
         final Slice<MemberResponseWithRole> response = memberQueryRepository.findByRole(
             MemberRole.ROLE_ADMIN, pageable
         );
+        final String cursor = cursorService.serializeCursor(response);
+        return SliceResponse.of(response, cursor);
+    }
+
+    public SliceResponse<MemberResponseWithRole> readMembersBy(
+        final CursorPageable<? extends Cursor> pageable
+    ) {
+        final Slice<MemberResponseWithRole> response = memberQueryRepository.findByRole(null, pageable);
         final String cursor = cursorService.serializeCursor(response);
         return SliceResponse.of(response, cursor);
     }
