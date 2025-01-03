@@ -41,7 +41,7 @@ public class SecurityConfig {
                     "/",
                     "/ws/**",
                     "/oauth2/**",
-                    "/auth/login",
+                    "/auth/**",
                     "/login"
                 )
                 .permitAll()

@@ -55,4 +55,8 @@ public class Member extends BaseEntity {
     public boolean isActivated() {
         return role.isActivated();
     }
+
+    public void activate() {
+        this.role = MemberRole.ROLE_ACTIVATED;
+    }
 }
