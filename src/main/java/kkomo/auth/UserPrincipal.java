@@ -39,6 +39,10 @@ public class UserPrincipal implements OAuth2User {
         return authorities;
     }
 
+    public boolean isActivated() {
+        return member.isActivated();
+    }
+
     public Long getId() {
         return member.getId();
     }
@@ -46,5 +50,13 @@ public class UserPrincipal implements OAuth2User {
     @Override
     public String getName() {
         return member.getName();
+    }
+
+    @Override
+    public String toString() {
+        return String.format(
+            "Name: [%s], Granted Authorities: [%s], User Attributes: [%s]",
+            getName(), getAuthorities(), getAttributes()
+        );
     }
 }
