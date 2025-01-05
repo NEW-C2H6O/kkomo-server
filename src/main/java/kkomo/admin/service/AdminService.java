@@ -6,6 +6,7 @@ import kkomo.auth.UserPrincipal;
 import kkomo.member.domain.Member;
 import kkomo.member.domain.MemberRole;
 import kkomo.member.repository.MemberRepository;
+import kkomo.member.service.MemberDeleter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.session.SessionInformation;
@@ -21,6 +22,8 @@ public class AdminService {
     private final SessionRegistry sessionRegistry;
     private final MemberRepository memberRepository;
     private final ActivityCodeRepository activityCodeRepository;
+
+    private final MemberDeleter memberDeleter;
 
     @Transactional
     public void publishActivityCode(final String codeValue) {
@@ -70,5 +73,11 @@ public class AdminService {
             throw new IllegalArgumentException("관리자가 아닌 회원입니다.");
         }
         member.removeAdmin();
+    }
+
+    @Transactional
+    public void banMember(final Long memberId) {
+        memberDeleter.delete(memberId);
+        // TODO: 해당 회원을 블랙리스트에 등록
     }
 }
