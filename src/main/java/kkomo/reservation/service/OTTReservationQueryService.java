@@ -39,7 +39,7 @@ public class OTTReservationQueryService {
         final Long memberId,
         final CursorPageable<? extends Cursor> pageable
     ) {
-        final Slice<GetOTTReservationResponse> response = queryRepository.findByMember_Id(memberId, pageable);
+        final Slice<GetOTTReservationResponse> response = queryRepository.findByMemberId(memberId, pageable);
         final String cursor = cursorService.serializeCursor(response);
         return SliceResponse.of(response, cursor);
     }

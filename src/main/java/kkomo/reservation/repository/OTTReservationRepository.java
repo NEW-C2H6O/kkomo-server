@@ -13,8 +13,8 @@ public interface OTTReservationRepository extends JpaRepository<OTTReservation, 
         "FROM ott_reservation r " +
         "WHERE r.ott_id = :ottId " +
         "AND r.profile_id = :profileId " +
-        "AND r.start_time >= :start " +
-        "AND r.end_time <= :end " +
+        "AND r.start_time < :end " +
+        "AND r.end_time > :start " +
         "FOR UPDATE", nativeQuery = true)
     List<Long> lockByOttIdAndProfileIdAndTimeBetween(
         Long ottId,
@@ -22,4 +22,6 @@ public interface OTTReservationRepository extends JpaRepository<OTTReservation, 
         LocalDateTime start,
         LocalDateTime end
     );
+
+    void deleteByMemberId(Long memberId);
 }

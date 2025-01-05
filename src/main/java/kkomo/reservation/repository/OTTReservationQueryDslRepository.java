@@ -42,7 +42,7 @@ class OTTReservationQueryDslRepository extends QueryDslSupport implements OTTRes
     }
 
     @Override
-    public Slice<GetOTTReservationResponse> findByMember_Id(
+    public Slice<GetOTTReservationResponse> findByMemberId(
         final Long memberId,
         final CursorPageable<? extends Cursor> pageable
     ) {

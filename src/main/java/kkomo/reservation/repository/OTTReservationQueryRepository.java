@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface OTTReservationQueryRepository {
 
-    Slice<GetOTTReservationResponse> findByMember_Id(Long memberId, CursorPageable<? extends Cursor> pageable);
+    Slice<GetOTTReservationResponse> findByMemberId(Long memberId, CursorPageable<? extends Cursor> pageable);
 
     List<OTTReservationTime> findByOttIdAndProfileIdAndTimeBetween(
         Long ottId,
