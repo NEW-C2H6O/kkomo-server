@@ -81,7 +81,7 @@ public class SecurityConfig {
                 .logoutRequestMatcher(new AntPathRequestMatcher("/auth/logout","GET"))
                 .addLogoutHandler(customLogoutHandler)
                 .invalidateHttpSession(true)
-                .deleteCookies("JSESSIONID")
+                .clearAuthentication(true)
                 .logoutSuccessUrl("/logoutSuccess") //TODO 리다이렉트될 프론트 주소
             );
         return http.build();
