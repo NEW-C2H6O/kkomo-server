@@ -7,8 +7,13 @@ import kkomo.member.repository.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 @Slf4j
 @Service
@@ -17,6 +22,8 @@ public class AuthService {
     private final ActivityCodeRepository activityCodeRepository;
     private final MemberRepository memberRepository;
     private final String contextPath;
+    private final String LOGOUT_URL = "https://kapi.kakao.com/v1/user/logout";
+
 
     @Autowired
     public AuthService(
@@ -44,5 +51,30 @@ public class AuthService {
             .orElseThrow(() -> new IllegalArgumentException("해당 회원이 존재하지 않습니다."));
         member.activate();
         log.debug("Member {} activated", member.getName());
+    }
+
+    public String getAccessToken(String memberEmail) {
+        Member member = memberRepository.findByEmail(memberEmail)
+                .orElseThrow(() -> new IllegalArgumentException("해당 회원이 존재하지 않습니다."));
+
+        return member.getAccessToken();
+    }
+
+    @Async
+    public void logoutFromKakao(String accessToken) {
+        String result;
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBearerAuth(accessToken);
+
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+            RestTemplate restTemplate = new RestTemplate();
+
+            result = restTemplate.exchange(LOGOUT_URL, HttpMethod.POST, entity, String.class).getBody();
+            log.info("logged out user from kakao : {}", result);
+        } catch (Exception e) {
+            // TODO 예외 처리
+            e.printStackTrace();
+        }
     }
 }

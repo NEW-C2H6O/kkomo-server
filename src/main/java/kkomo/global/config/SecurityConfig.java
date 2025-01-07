@@ -1,6 +1,7 @@
 package kkomo.global.config;
 
 import kkomo.auth.CustomAuthenticationEntryPoint;
+import kkomo.auth.handler.CustomLogoutHandler;
 import kkomo.auth.handler.OAuth2FailureHandler;
 import kkomo.auth.handler.OAuth2SuccessHandler;
 import kkomo.auth.service.OAuth2UserService;
@@ -13,6 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Slf4j
 @Configuration
@@ -24,6 +26,7 @@ public class SecurityConfig {
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final OAuth2FailureHandler oAuth2FailureHandler;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final CustomLogoutHandler customLogoutHandler;
 
     @Bean
     public SessionRegistry sessionRegistry() {
@@ -42,7 +45,8 @@ public class SecurityConfig {
                     "/ws/**",
                     "/oauth2/**",
                     "/auth/**",
-                    "/login"
+                    "/login",
+                    "/logoutSuccess"
                 )
                 .permitAll()
                 .requestMatchers(
@@ -72,7 +76,14 @@ public class SecurityConfig {
             .sessionManagement(sessionManagement -> sessionManagement
                 .maximumSessions(1)
                 .sessionRegistry(sessionRegistry())
-                .expiredUrl("/login?expired"));
+                .expiredUrl("/login?expired"))
+            .logout(logout -> logout
+                .logoutRequestMatcher(new AntPathRequestMatcher("/auth/logout","GET"))
+                .addLogoutHandler(customLogoutHandler)
+                .invalidateHttpSession(true)
+                .clearAuthentication(true)
+                .logoutSuccessUrl("/logoutSuccess") //TODO 리다이렉트될 프론트 주소
+            );
         return http.build();
     }
 }

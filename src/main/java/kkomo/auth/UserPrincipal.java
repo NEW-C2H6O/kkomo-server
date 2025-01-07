@@ -49,7 +49,7 @@ public class UserPrincipal implements OAuth2User {
 
     @Override
     public String getName() {
-        return member.getName();
+        return member.getEmail();
     }
 
     @Override
