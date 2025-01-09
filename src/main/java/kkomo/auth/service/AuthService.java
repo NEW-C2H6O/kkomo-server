@@ -23,6 +23,7 @@ public class AuthService {
     private final MemberRepository memberRepository;
     private final String contextPath;
     private final String LOGOUT_URL = "https://kapi.kakao.com/v1/user/logout";
+    private final String UNLINK_URL = "https://kapi.kakao.com/v1/user/unlink";
 
 
     @Autowired
@@ -74,6 +75,23 @@ public class AuthService {
             log.info("logged out user from kakao : {}", result);
         } catch (Exception e) {
             // TODO 예외 처리
+            e.printStackTrace();
+        }
+    }
+
+    @Async
+    public void unlinkFromKakao(String accessToken) {
+        String result;
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBearerAuth(accessToken);
+
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+            RestTemplate restTemplate = new RestTemplate();
+
+            result = restTemplate.exchange(UNLINK_URL, HttpMethod.POST, entity, String.class).getBody();
+            log.info("unlink user from kakao : {}", result);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

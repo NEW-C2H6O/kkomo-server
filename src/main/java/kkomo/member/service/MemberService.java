@@ -5,12 +5,14 @@ import kkomo.member.domain.Member;
 import kkomo.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final MemberDeleter memberDeleter;
 
     public Member registerMember(
         String name,
@@ -40,6 +42,12 @@ public class MemberService {
                 member.isActivated()
         );
     }
+
+    @Transactional
+    public void deleteMember(long memberId) {
+        memberDeleter.delete(memberId);
+    }
+
     private int getTagCount(String name) {
         return memberRepository.countByName(name);
     }
