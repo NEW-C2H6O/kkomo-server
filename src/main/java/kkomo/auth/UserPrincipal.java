@@ -59,4 +59,8 @@ public class UserPrincipal implements OAuth2User {
             getName(), getAuthorities(), getAttributes()
         );
     }
+
+    public String getAccessToken() {
+        return member.getAccessToken();
+    }
 }

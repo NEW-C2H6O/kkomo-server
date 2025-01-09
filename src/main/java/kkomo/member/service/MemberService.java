@@ -1,7 +1,7 @@
 package kkomo.member.service;
 
-import kkomo.member.controller.response.MemberResponse;
 import kkomo.member.domain.Member;
+import kkomo.member.domain.MemberDeleter;
 import kkomo.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,12 +15,12 @@ public class MemberService {
     private final MemberDeleter memberDeleter;
 
     public Member registerMember(
-        String name,
-        String profileImage,
-        String email,
-        String provider
+        final String name,
+        final String profileImage,
+        final String email,
+        final String provider
     ) {
-        int tagCount = getTagCount(name);
+        final int tagCount = getTagCount(name);
         return Member.builder()
             .name(name)
             .tag(tagCount + 1)
@@ -30,25 +30,12 @@ public class MemberService {
             .build();
     }
 
-    public MemberResponse getMemberInfo(long memberId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."));
-        String nameAndTag = member.getName() + "#" + member.getTag();
-        return MemberResponse.of(
-                memberId,
-                member.getProfileImage(),
-                member.getName(),
-                nameAndTag,
-                member.isActivated()
-        );
-    }
-
     @Transactional
-    public void deleteMember(long memberId) {
+    public void deleteMember(final Long memberId) {
         memberDeleter.delete(memberId);
     }
 
-    private int getTagCount(String name) {
+    private int getTagCount(final String name) {
         return memberRepository.countByName(name);
     }
 }
