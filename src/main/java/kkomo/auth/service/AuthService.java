@@ -4,34 +4,18 @@ import kkomo.admin.domain.ActivityCode;
 import kkomo.admin.repository.ActivityCodeRepository;
 import kkomo.member.domain.Member;
 import kkomo.member.domain.MemberReader;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class AuthService {
 
     private final ActivityCodeRepository activityCodeRepository;
     private final MemberReader memberReader;
-    private final String contextPath;
-
-    @Autowired
-    public AuthService(
-        @Value("${server.servlet.context-path}") String contextPath,
-        ActivityCodeRepository activityCodeRepository,
-        MemberReader memberReader
-    ) {
-        this.contextPath = contextPath;
-        this.activityCodeRepository = activityCodeRepository;
-        this.memberReader = memberReader;
-    }
-
-    public String getLoginUrl() {
-        return contextPath + "/oauth2/authorization/kakao";
-    }
 
     @Transactional
     public void activeMember(final Long memberId, final String activityCode) {

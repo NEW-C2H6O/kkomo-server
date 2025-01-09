@@ -18,7 +18,7 @@ import java.util.Map;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class OAuth2UserService extends DefaultOAuth2UserService {
+public class KakaoOAuth2UserService extends DefaultOAuth2UserService {
 
     private static final String KAKAO_ACCOUNT = "kakao_account";
     private static final String PROPERTIES = "properties";
@@ -29,27 +29,27 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
     // 카카오로그인 후 후처리
     @Override
     @Transactional
-    public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        OAuth2User oAuth2User = super.loadUser(userRequest);
+    public OAuth2User loadUser(final OAuth2UserRequest request) throws OAuth2AuthenticationException {
+        final OAuth2User oAuth2User = super.loadUser(request);
 
-        Map<String, Object> properties = getProperties(oAuth2User);
-        Map<String, Object> account = getKakaoAccount(oAuth2User);
+        final Map<String, Object> properties = getProperties(oAuth2User);
+        final Map<String, Object> account = getKakaoAccount(oAuth2User);
 
-        String email = (String) account.get("email");
-        String name = (String) properties.get("nickname");
-        String profileImage = (String) properties.get("profile_image");
-        String provider = userRequest.getClientRegistration().getClientName();
-        String accessToken = userRequest.getAccessToken().getTokenValue();
+        final String email = (String) account.get("email");
+        final String name = (String) properties.get("nickname");
+        final String profileImage = (String) properties.get("profile_image");
+        final String provider = request.getClientRegistration().getClientName();
+        final String accessToken = request.getAccessToken().getTokenValue();
 
-        Member existingMember = memberRepository.findByEmail(email)
-                .orElseGet(() -> memberService.registerMember(name, profileImage, email, provider));
-        existingMember.updateAccessToken(accessToken);
+        final Member member = memberRepository.findByEmail(email)
+            .orElseGet(() -> memberService.registerMember(name, profileImage, email, provider));
+        member.updateAccessToken(accessToken);
 
-        memberRepository.save(existingMember);
+        memberRepository.save(member);
 
         log.debug("Loading user: {}, Access Token: {}", oAuth2User.getName(), accessToken);
 
-        return UserPrincipal.of(oAuth2User, existingMember);
+        return UserPrincipal.of(oAuth2User, member);
     }
 
     private Map<String, Object> getProperties(OAuth2User oAuth2User) {
