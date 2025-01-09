@@ -1,5 +1,6 @@
 package kkomo.member.service;
 
+import kkomo.member.controller.response.MemberResponse;
 import kkomo.member.domain.Member;
 import kkomo.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,18 @@ public class MemberService {
             .build();
     }
 
+    public MemberResponse getMemberInfo(long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."));
+        String nameAndTag = member.getName() + "#" + member.getTag();
+        return MemberResponse.of(
+                memberId,
+                member.getProfileImage(),
+                member.getName(),
+                nameAndTag,
+                member.isActivated()
+        );
+    }
     private int getTagCount(String name) {
         return memberRepository.countByName(name);
     }

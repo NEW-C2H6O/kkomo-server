@@ -4,15 +4,17 @@ public record MemberResponse(
     Long memberId,
     String profileImage,
     String name,
-    String nameAndTag
+    String nameAndTag,
+    Boolean isActivated
 ) {
 
     public static MemberResponse of(
         Long memberId,
         String profileImage,
         String name,
-        String nameAndTag
+        String nameAndTag,
+        Boolean isActivated
     ) {
-        return new MemberResponse(memberId, profileImage, name, nameAndTag);
+        return new MemberResponse(memberId, profileImage, name, nameAndTag, isActivated);
     }
 }
