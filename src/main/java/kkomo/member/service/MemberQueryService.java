@@ -1,6 +1,6 @@
 package kkomo.member.service;
 
-import kkomo.member.controller.response.MemberResponse;
+import kkomo.member.controller.dto.response.MemberInfoResponse;
 import kkomo.member.domain.Member;
 import kkomo.member.domain.MemberReader;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +14,9 @@ public class MemberQueryService {
 
     private final MemberReader memberReader;
 
-    public MemberResponse getMemberInfo(final Long memberId) {
+    public MemberInfoResponse getMemberInfo(final Long memberId) {
         final Member member = memberReader.readById(memberId);
-        return MemberResponse.of(
+        return MemberInfoResponse.of(
             memberId,
             member.getProfileImage(),
             member.getName(),
