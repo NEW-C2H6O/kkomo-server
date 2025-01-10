@@ -1,11 +1,10 @@
 package kkomo.auth.service;
 
 import kkomo.auth.UserPrincipal;
+import kkomo.auth.domain.SignUpCommand;
+import kkomo.auth.domain.SignUpManager;
 import kkomo.member.domain.Member;
-import kkomo.member.repository.MemberRepository;
-import kkomo.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -15,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class KakaoOAuth2UserService extends DefaultOAuth2UserService {
@@ -23,8 +21,7 @@ public class KakaoOAuth2UserService extends DefaultOAuth2UserService {
     private static final String KAKAO_ACCOUNT = "kakao_account";
     private static final String PROPERTIES = "properties";
 
-    private final MemberService memberService;
-    private final MemberRepository memberRepository;
+    private final SignUpManager signUpManager;
 
     // 카카오로그인 후 후처리
     @Override
@@ -35,19 +32,11 @@ public class KakaoOAuth2UserService extends DefaultOAuth2UserService {
         final Map<String, Object> properties = getProperties(oAuth2User);
         final Map<String, Object> account = getKakaoAccount(oAuth2User);
 
-        final String email = (String) account.get("email");
-        final String name = (String) properties.get("nickname");
-        final String profileImage = (String) properties.get("profile_image");
-        final String provider = request.getClientRegistration().getClientName();
-        final String accessToken = request.getAccessToken().getTokenValue();
+        final SignUpCommand command = toSignUpCommand(properties, account, request);
+        final Member member = signUpManager.readOrSignUp(command);
 
-        final Member member = memberRepository.findByEmail(email)
-            .orElseGet(() -> memberService.registerMember(name, profileImage, email, provider));
+        final String accessToken = getAccessToken(request);
         member.updateAccessToken(accessToken);
-
-        memberRepository.save(member);
-
-        log.debug("Loading user: {}, Access Token: {}", oAuth2User.getName(), accessToken);
 
         return UserPrincipal.of(oAuth2User, member);
     }
@@ -58,5 +47,21 @@ public class KakaoOAuth2UserService extends DefaultOAuth2UserService {
 
     private Map<String, Object> getKakaoAccount(OAuth2User oAuth2User) {
         return oAuth2User.getAttribute(KAKAO_ACCOUNT);
+    }
+
+    private SignUpCommand toSignUpCommand(
+        final Map<String, Object> properties,
+        final Map<String, Object> account,
+        final OAuth2UserRequest request
+    ) {
+        final String email = (String) account.get("email");
+        final String name = (String) properties.get("nickname");
+        final String profileImage = (String) properties.get("profile_image");
+        final String provider = request.getClientRegistration().getClientName();
+        return new SignUpCommand(name, profileImage, email, provider);
+    }
+
+    private String getAccessToken(OAuth2UserRequest request) {
+        return request.getAccessToken().getTokenValue();
     }
 }

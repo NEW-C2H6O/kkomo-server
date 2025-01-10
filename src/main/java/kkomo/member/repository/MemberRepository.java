@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface MemberRepository extends JpaRepository<Member,Long> {
+public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Optional<Member> findByEmail(@NotNull String email);
 
@@ -21,5 +21,5 @@ public interface MemberRepository extends JpaRepository<Member,Long> {
     @Query("update Member m set m.role = 'ROLE_DEACTIVATED' where m.role = :role")
     int deactivateAllOf(@NotNull MemberRole role);
 
-    int countByRole(MemberRole role);
+    int countByRole(@NotNull MemberRole role);
 }
