@@ -22,7 +22,7 @@ public class ActivityCode extends BaseEntity {
     @Column(name = "value", nullable = false)
     private String value;
 
-    public static ActivityCode of(final String value) {
+    public static ActivityCode from(final String value) {
         ActivityCode activityCode = new ActivityCode();
         activityCode.value = value;
         return activityCode;
