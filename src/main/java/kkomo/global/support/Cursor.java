@@ -15,4 +15,11 @@ public class Cursor {
     public Cursor(@JsonProperty("id") final Long id) {
         this.id = id;
     }
+
+    public static Cursor from(final Long id) {
+        if (id == null) {
+            return null;
+        }
+        return new Cursor(id);
+    }
 }

@@ -3,7 +3,7 @@ package kkomo.admin.controller.dto.response;
 import kkomo.member.domain.Member;
 import kkomo.member.domain.MemberRole;
 
-public record MemberResponseWithRole(
+public record MemberResponse(
     Long memberId,
     String profileImage,
     String name,
@@ -11,8 +11,8 @@ public record MemberResponseWithRole(
     MemberRole role
 ) {
 
-    public static MemberResponseWithRole from(final Member member) {
-        return new MemberResponseWithRole(
+    public static MemberResponse from(final Member member) {
+        return new MemberResponse(
             member.getId(),
             member.getProfileImage(),
             member.getName(),

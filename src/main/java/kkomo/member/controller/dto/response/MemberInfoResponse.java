@@ -1,6 +1,6 @@
-package kkomo.member.controller.response;
+package kkomo.member.controller.dto.response;
 
-public record MemberResponse(
+public record MemberInfoResponse(
     Long memberId,
     String profileImage,
     String name,
@@ -8,13 +8,13 @@ public record MemberResponse(
     Boolean isActivated
 ) {
 
-    public static MemberResponse of(
+    public static MemberInfoResponse of(
         Long memberId,
         String profileImage,
         String name,
         String nameAndTag,
         Boolean isActivated
     ) {
-        return new MemberResponse(memberId, profileImage, name, nameAndTag, isActivated);
+        return new MemberInfoResponse(memberId, profileImage, name, nameAndTag, isActivated);
     }
 }

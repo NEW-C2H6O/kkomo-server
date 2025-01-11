@@ -15,9 +15,4 @@ public class MemberReader {
         return memberRepository.findById(memberId)
             .orElseThrow(() -> new IllegalArgumentException(MEMBER_NOT_FOUND));
     }
-
-    public Member readByEmail(final String email) {
-        return memberRepository.findByEmail(email)
-            .orElseThrow(() -> new IllegalArgumentException(MEMBER_NOT_FOUND));
-    }
 }

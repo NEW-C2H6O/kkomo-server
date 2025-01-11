@@ -1,7 +1,7 @@
 package kkomo.member.repository;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
-import kkomo.admin.controller.dto.response.MemberResponseWithRole;
+import kkomo.admin.controller.dto.response.MemberResponse;
 import kkomo.global.support.Cursor;
 import kkomo.global.support.CursorPageable;
 import kkomo.global.support.QueryDslSupport;
@@ -32,7 +32,7 @@ class MemberQueryDslRepository extends QueryDslSupport implements MemberQueryRep
         return member.role.eq(role);
     }
 
-    private List<MemberResponseWithRole> fetchContent(
+    private List<MemberResponse> fetchContent(
         final MemberRole role,
         final CursorPageable<? extends Cursor> pageable
     ) {
@@ -42,16 +42,16 @@ class MemberQueryDslRepository extends QueryDslSupport implements MemberQueryRep
             .limit(pageable.getPageSize() + 1)
             .fetch()
             .stream()
-            .map(MemberResponseWithRole::from)
+            .map(MemberResponse::from)
             .toList();
     }
 
     @Override
-    public Slice<MemberResponseWithRole> findByRole(
+    public Slice<MemberResponse> findByRole(
         final MemberRole role,
         final CursorPageable<? extends Cursor> pageable
     ) {
-        final List<MemberResponseWithRole> content = fetchContent(role, pageable);
+        final List<MemberResponse> content = fetchContent(role, pageable);
         return paginate(content, pageable);
     }
 }
