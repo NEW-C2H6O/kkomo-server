@@ -11,15 +11,15 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface MemberRepository extends JpaRepository<Member,Long> {
+public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Optional<Member> findByEmail(@NotNull String email);
 
     int countByName(@NotNull String name);
 
     @Modifying(clearAutomatically = true)
-    @Query("update Member m set m.role = 'ROLE_DEACTIVATED' where m.role = :role")
-    int deactivateAllOf(@NotNull MemberRole role);
+    @Query("update Member m set m.role = :to where m.role = :from")
+    int updateRole(@NotNull MemberRole from, @NotNull MemberRole to);
 
-    int countByRole(MemberRole role);
+    int countByRole(@NotNull MemberRole role);
 }

@@ -1,12 +1,12 @@
 package kkomo.admin.service;
 
-import kkomo.admin.controller.dto.response.MemberResponseWithRole;
+import kkomo.admin.controller.dto.response.MemberResponse;
 import kkomo.global.support.Cursor;
 import kkomo.global.support.CursorPageable;
 import kkomo.global.support.SliceResponse;
 import kkomo.member.domain.MemberRole;
 import kkomo.member.repository.MemberQueryRepository;
-import kkomo.member.service.MemberResponseWithRoleCursorService;
+import kkomo.member.repository.MemberResponseCursorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -17,24 +17,24 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class AdminQueryService {
 
-    private final MemberResponseWithRoleCursorService cursorService;
+    private final MemberResponseCursorService cursorService;
     private final MemberQueryRepository memberQueryRepository;
 
-    public SliceResponse<MemberResponseWithRole> readAdminsBy(
+    public SliceResponse<MemberResponse> readAdminsBy(
         final CursorPageable<? extends Cursor> pageable
     ) {
-        final Slice<MemberResponseWithRole> response = memberQueryRepository.findByRole(
+        final Slice<MemberResponse> response = memberQueryRepository.findByRole(
             MemberRole.ROLE_ADMIN, pageable
         );
-        final String cursor = cursorService.serializeCursor(response);
+        final String cursor = cursorService.encodeCursor(response);
         return SliceResponse.of(response, cursor);
     }
 
-    public SliceResponse<MemberResponseWithRole> readMembersBy(
+    public SliceResponse<MemberResponse> readMembersBy(
         final CursorPageable<? extends Cursor> pageable
     ) {
-        final Slice<MemberResponseWithRole> response = memberQueryRepository.findByRole(null, pageable);
-        final String cursor = cursorService.serializeCursor(response);
+        final Slice<MemberResponse> response = memberQueryRepository.findByRole(null, pageable);
+        final String cursor = cursorService.encodeCursor(response);
         return SliceResponse.of(response, cursor);
     }
 }

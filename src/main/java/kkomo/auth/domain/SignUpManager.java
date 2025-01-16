@@ -1,38 +1,43 @@
-package kkomo.member.service;
+package kkomo.auth.domain;
 
 import kkomo.member.domain.Member;
-import kkomo.member.domain.MemberDeleter;
 import kkomo.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class MemberService {
+public class SignUpManager {
 
     private final MemberRepository memberRepository;
-    private final MemberDeleter memberDeleter;
 
-    public Member registerMember(
+    public Member readOrSignUp(final SignUpCommand command) {
+        final String email = command.email();
+        return memberRepository.findByEmail(email)
+            .orElseGet(() -> signUp(
+                command.name(),
+                command.profileImage(),
+                email,
+                command.provider()
+            ));
+    }
+
+    private Member signUp(
         final String name,
         final String profileImage,
         final String email,
         final String provider
     ) {
         final int tagCount = getTagCount(name);
-        return Member.builder()
+        final Member member = Member.builder()
             .name(name)
             .tag(tagCount + 1)
             .email(email)
             .profileImage(profileImage)
             .provider(provider)
             .build();
-    }
-
-    @Transactional
-    public void deleteMember(final Long memberId) {
-        memberDeleter.delete(memberId);
+        memberRepository.save(member);
+        return member;
     }
 
     private int getTagCount(final String name) {

@@ -1,13 +1,11 @@
 package kkomo.admin.service;
 
 import kkomo.admin.domain.ActivityCode;
+import kkomo.admin.domain.AdminAssigner;
+import kkomo.admin.domain.AdminRemover;
+import kkomo.admin.domain.MemberDeactivator;
 import kkomo.admin.repository.ActivityCodeRepository;
 import kkomo.auth.UserPrincipal;
-import kkomo.member.domain.Member;
-import kkomo.member.domain.MemberReader;
-import kkomo.member.domain.MemberRole;
-import kkomo.member.repository.MemberRepository;
- import kkomo.member.domain.MemberDeleter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.session.SessionInformation;
@@ -17,25 +15,23 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
-public class AdminService {
+public class AdminCommandService {
 
     private final SessionRegistry sessionRegistry;
-
-    private final MemberRepository memberRepository;
     private final ActivityCodeRepository activityCodeRepository;
 
-    private final MemberReader memberReader;
-    private final MemberDeleter memberDeleter;
+    private final AdminAssigner adminAssigner;
+    private final AdminRemover adminRemover;
+    private final MemberDeactivator memberDeactivator;
 
     @Transactional
     public void publishActivityCode(final String codeValue) {
         if (activityCodeRepository.existsByValue(codeValue)) {
             throw new IllegalArgumentException("이미 사용 중인 코드입니다.");
         }
-        final ActivityCode activityCode = ActivityCode.of(codeValue);
+        final ActivityCode activityCode = ActivityCode.from(codeValue);
         activityCodeRepository.save(activityCode);
-        memberRepository.deactivateAllOf(MemberRole.ROLE_ACTIVATED);
+        memberDeactivator.deactivateAll();
         invalidateAllSessions();
     }
 
@@ -53,32 +49,11 @@ public class AdminService {
 
     @Transactional
     public void assignAdmin(final Long memberId) {
-        final Member member = memberReader.readById(memberId);
-        if (member.isAdmin()) {
-            throw new IllegalArgumentException("이미 관리자인 회원입니다.");
-        }
-        if (member.isDeactivated()) {
-            throw new IllegalArgumentException("비활성화된 회원입니다.");
-        }
-        member.assignAdmin();
+        adminAssigner.assign(memberId);
     }
 
     @Transactional
     public void removeAdmin(final Long memberId) {
-        final int count = memberRepository.countByRole(MemberRole.ROLE_ADMIN);
-        if (count == 1) {
-            throw new IllegalArgumentException("관리자는 최소 한 명 이상 존재해야 합니다.");
-        }
-        final Member member = memberReader.readById(memberId);
-        if (!member.isAdmin()) {
-            throw new IllegalArgumentException("관리자가 아닌 회원입니다.");
-        }
-        member.removeAdmin();
-    }
-
-    @Transactional
-    public void banMember(final Long memberId) {
-        memberDeleter.delete(memberId);
-        // TODO: 해당 회원을 블랙리스트에 등록
+        adminRemover.remove(memberId);
     }
 }
