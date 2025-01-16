@@ -11,6 +11,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import static kkomo.auth.AuthorizationRequestRedirectResolver.REDIRECT_PARAM_KEY;
+
 @Slf4j
 @Service
 public class KakaoOAuth2Service implements OAuth2LoginLinkProvider, OAuth2Unlinker, OAuth2Logouter {
@@ -25,8 +27,13 @@ public class KakaoOAuth2Service implements OAuth2LoginLinkProvider, OAuth2Unlink
         this.contextPath = contextPath;
     }
 
-    public String getLoginUrl() {
-        return contextPath + "/oauth2/authorization/kakao";
+    public String getLoginUrl(final String redirect) {
+        return String.format(
+            "%s/oauth2/authorization/kakao?%s=%s",
+            contextPath,
+            REDIRECT_PARAM_KEY,
+            redirect
+        );
     }
 
     @Async

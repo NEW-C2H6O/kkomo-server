@@ -13,6 +13,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
+import static kkomo.auth.AuthorizationRequestRedirectResolver.REDIRECT_PARAM_KEY;
 import static kkomo.global.ApiResponse.ApiSuccessResult;
 
 @Slf4j
@@ -25,8 +26,8 @@ public class AuthController {
     private final OAuth2LoginLinkProvider oAuth2LoginLinkProvider;
 
     @GetMapping("/login")
-    public RedirectView login() {
-        return new RedirectView(oAuth2LoginLinkProvider.getLoginUrl());
+    public RedirectView login(@RequestParam(REDIRECT_PARAM_KEY) final String redirect) {
+        return new RedirectView(oAuth2LoginLinkProvider.getLoginUrl(redirect));
     }
 
     @PostMapping("/activate")

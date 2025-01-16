@@ -1,13 +1,15 @@
 package kkomo.global.config;
 
+import kkomo.auth.AuthorizationRequestRedirectResolver;
 import kkomo.auth.CustomAuthenticationEntryPoint;
 import kkomo.auth.handler.CustomLogoutHandler;
 import kkomo.auth.handler.OAuth2FailureHandler;
-import kkomo.auth.handler.OAuth2SuccessHandler;
+import kkomo.auth.handler.OAuth2LoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.session.SessionRegistry;
@@ -15,6 +17,12 @@ import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Slf4j
 @Configuration
@@ -23,10 +31,16 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class SecurityConfig {
 
     private final DefaultOAuth2UserService oAuth2UserService;
-    private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final OAuth2FailureHandler oAuth2FailureHandler;
+    private final AuthorizationRequestRedirectResolver authorizationRequestRedirectResolver;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final CustomLogoutHandler customLogoutHandler;
+
+    public static final List<String> clients = List.of(
+        "http://localhost:3000",
+        "https://kkomo.site"
+    );
 
     @Bean
     public SessionRegistry sessionRegistry() {
@@ -68,7 +82,10 @@ public class SecurityConfig {
                     userInfoEndpoint.userService(oAuth2UserService)
                 )
                 .loginProcessingUrl("/auth/login")
-                .successHandler(oAuth2SuccessHandler)
+                .authorizationEndpoint(authorization ->
+                    authorization.authorizationRequestResolver(authorizationRequestRedirectResolver)
+                )
+                .successHandler(oAuth2LoginSuccessHandler)
                 .failureHandler(oAuth2FailureHandler)
             )
             .exceptionHandling(httpSecurityExceptionHandling ->
@@ -85,5 +102,23 @@ public class SecurityConfig {
                 .logoutSuccessUrl("/logoutSuccess") //TODO 리다이렉트될 프론트 주소
             );
         return http.build();
+    }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        final CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(clients);
+        configuration.setAllowedMethods(Arrays.asList(
+            HttpMethod.GET.name(),
+            HttpMethod.POST.name(),
+            HttpMethod.PATCH.name(),
+            HttpMethod.PUT.name(),
+            HttpMethod.DELETE.name()
+        ));
+        configuration.setAllowCredentials(true);
+        configuration.setAllowedHeaders(List.of("*"));
+        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }
