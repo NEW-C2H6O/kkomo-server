@@ -1,9 +1,10 @@
 package kkomo.reservation.service;
 
-import kkomo.global.support.Cursor;
 import kkomo.global.support.CursorPageable;
 import kkomo.global.support.SliceResponse;
 import kkomo.reservation.controller.dto.response.GetOTTReservationResponse;
+import kkomo.reservation.domain.OTTReservationCursor;
+import kkomo.reservation.domain.OTTReservationFilter;
 import kkomo.reservation.domain.OTTReservationTime;
 import kkomo.reservation.repository.OTTReservationCursorService;
 import kkomo.reservation.repository.OTTReservationQueryRepository;
@@ -24,7 +25,11 @@ public class OTTReservationQueryService {
     private final OTTReservationQueryRepository queryRepository;
     private final OTTReservationCursorService cursorService;
 
-    public List<OTTReservationTime> readBy(Long ottId, Long profileId, LocalDate date) {
+    public List<OTTReservationTime> readBy(
+        final Long ottId,
+        final Long profileId,
+        final LocalDate date
+    ) {
         final LocalDateTime start = date.atStartOfDay();
         final LocalDateTime end = date.atTime(23, 59, 59);
 
@@ -36,12 +41,17 @@ public class OTTReservationQueryService {
         );
     }
 
-    public SliceResponse<GetOTTReservationResponse> readMyBy(
-        final Long memberId,
-        final CursorPageable<? extends Cursor> pageable
+    public SliceResponse<GetOTTReservationResponse> readBy(
+        Long memberId,
+        OTTReservationFilter filter,
+        CursorPageable<OTTReservationCursor> pageable
     ) {
-        final Slice<GetOTTReservationResponse> response = queryRepository.findByMemberId(memberId, pageable);
-        final String cursor = cursorService.serializeCursor(response);
-        return SliceResponse.of(response, cursor);
+        final Slice<GetOTTReservationResponse> response = queryRepository.findBy(
+            memberId,
+            filter,
+            pageable
+        );
+        final String next = cursorService.serializeCursor(response, pageable.getSort());
+        return SliceResponse.of(response, next);
     }
 }
