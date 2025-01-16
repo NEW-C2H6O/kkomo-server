@@ -2,18 +2,11 @@ package kkomo.reservation.controller;
 
 import kkomo.auth.UserPrincipal;
 import kkomo.global.ApiResponse;
-import kkomo.global.support.Cursor;
-import kkomo.global.support.CursorDefault;
-import kkomo.global.support.CursorPageable;
-import kkomo.global.support.SliceResponse;
 import kkomo.reservation.controller.dto.request.ReserveOTTRequest;
-import kkomo.reservation.controller.dto.response.GetOTTReservationResponse;
 import kkomo.reservation.controller.dto.response.ReserveOTTResponse;
-import kkomo.reservation.service.OTTReservationQueryService;
-import kkomo.reservation.service.OTTReservationService;
+import kkomo.reservation.service.OTTReservationCommandService;
 import kkomo.reservation.service.command.ReserveOTTCommand;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,11 +17,10 @@ import static kkomo.global.ApiResponse.ApiSuccessResult;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/reservations")
-public class OTTReservationController {
+public class OTTReservationCommandController {
 
     private final OTTReservationCommandMapper mapper;
-    private final OTTReservationService ottReservationService;
-    private final OTTReservationQueryService ottReservationQueryService;
+    private final OTTReservationCommandService ottReservationService;
 
     @PostMapping
     public ResponseEntity<ApiSuccessResult<ReserveOTTResponse>> reserveOTT(
@@ -43,22 +35,12 @@ public class OTTReservationController {
     }
 
     @DeleteMapping("/{reservationId}")
-    public ResponseEntity<ApiResponse.ApiSuccessResult<?>> cancelOTT(
+    public ResponseEntity<ApiSuccessResult<?>> cancelOTT(
         @PathVariable final Long reservationId,
         @AuthenticationPrincipal final UserPrincipal principal
     ) {
         final Long memberId = principal.getId();
-        ottReservationService.cancel(reservationId, memberId);
+        ottReservationService.cancel(memberId, reservationId);
         return ApiResponse.success(HttpStatus.NO_CONTENT);
-    }
-
-    @GetMapping("/me")
-    public ResponseEntity<ApiSuccessResult<SliceResponse<GetOTTReservationResponse>>> getMyOTTReservation(
-        @CursorDefault @PageableDefault final CursorPageable<Cursor> pageable,
-        @AuthenticationPrincipal final UserPrincipal principal
-    ) {
-        final Long memberId = principal.getId();
-        final SliceResponse<GetOTTReservationResponse> response = ottReservationQueryService.readMyBy(memberId, pageable);
-        return ApiResponse.success(HttpStatus.OK, response);
     }
 }
