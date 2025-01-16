@@ -5,6 +5,7 @@ import kkomo.global.support.CursorPageable;
 import kkomo.global.support.SliceResponse;
 import kkomo.reservation.controller.dto.response.GetOTTReservationResponse;
 import kkomo.reservation.domain.OTTReservationTime;
+import kkomo.reservation.repository.OTTReservationCursorService;
 import kkomo.reservation.repository.OTTReservationQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
