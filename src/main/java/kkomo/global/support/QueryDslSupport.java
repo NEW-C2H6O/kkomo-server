@@ -52,7 +52,8 @@ public abstract class QueryDslSupport {
         final boolean hasNext = removeIfContentHasNext(mutable, size);
         final PageRequest request = PageRequest.of(
             isFirst(pageable) ? 0 : 1,
-            size
+            size,
+            pageable.getSort()
         );
         return new SliceImpl<>(mutable, request, hasNext);
     }
