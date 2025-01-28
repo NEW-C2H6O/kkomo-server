@@ -1,7 +1,6 @@
 package kkomo.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kkomo.global.ApiErrorResponse;
@@ -22,25 +21,25 @@ import static kkomo.global.ApiErrorResponse.ApiErrorResult;
 
 @Component
 @RequiredArgsConstructor
-public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
+public class ResponseEntityAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     private final ObjectMapper objectMapper;
 
     @Override
     public void commence(
-        HttpServletRequest request,
-        HttpServletResponse response,
-        AuthenticationException authException
-    ) throws IOException, ServletException {
-        HttpStatus status = HttpStatus.UNAUTHORIZED;
-        String message = "로그인이 필요합니다.";
+        final HttpServletRequest request,
+        final HttpServletResponse response,
+        final AuthenticationException authException
+    ) throws IOException {
+        final HttpStatus status = HttpStatus.UNAUTHORIZED;
+        final String message = "로그인이 필요합니다.";
 
-        ResponseEntity<ApiErrorResult> responseEntity = ApiErrorResponse.error(status, message);
+        final ResponseEntity<ApiErrorResult> responseEntity = ApiErrorResponse.error(status, message);
 
         response.setStatus(status.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
-        HttpHeaders headers = responseEntity.getHeaders();
+        final HttpHeaders headers = responseEntity.getHeaders();
         headers.forEach((key, value) -> {
             String headerValue = String.join(",", value);
             response.addHeader(key, headerValue);

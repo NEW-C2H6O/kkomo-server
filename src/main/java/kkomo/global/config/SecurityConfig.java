@@ -1,9 +1,8 @@
 package kkomo.global.config;
 
 import kkomo.auth.AuthorizationRequestRedirectResolver;
-import kkomo.auth.CustomAuthenticationEntryPoint;
-import kkomo.auth.handler.CustomLogoutHandler;
-import kkomo.auth.handler.OAuth2FailureHandler;
+import kkomo.auth.ResponseEntityAuthenticationEntryPoint;
+import kkomo.auth.handler.OAuth2LogoutSuccessHandler;
 import kkomo.auth.handler.OAuth2LoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,12 +31,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final DefaultOAuth2UserService oAuth2UserService;
-    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
-    private final OAuth2FailureHandler oAuth2FailureHandler;
+    private final DefaultOAuth2UserService userService;
+    private final OAuth2LoginSuccessHandler loginSuccessHandler;
+    private final OAuth2LogoutSuccessHandler logoutSuccessHandler;
     private final AuthorizationRequestRedirectResolver authorizationRequestRedirectResolver;
-    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
-    private final CustomLogoutHandler customLogoutHandler;
+    private final ResponseEntityAuthenticationEntryPoint authenticationEntryPoint;
+
 
     public static final List<String> clients = List.of(
         "http://localhost:3000",
@@ -82,27 +81,24 @@ public class SecurityConfig {
                 .redirectionEndpoint(redirection -> redirection
                     .baseUri("/login/oauth2/code/kakao"))
                 .userInfoEndpoint(userInfoEndpoint ->
-                    userInfoEndpoint.userService(oAuth2UserService)
+                    userInfoEndpoint.userService(userService)
                 )
                 .loginProcessingUrl("/auth/login")
                 .authorizationEndpoint(authorization ->
                     authorization.authorizationRequestResolver(authorizationRequestRedirectResolver)
                 )
-                .successHandler(oAuth2LoginSuccessHandler)
-                .failureHandler(oAuth2FailureHandler)
+                .successHandler(loginSuccessHandler)
             )
             .exceptionHandling(httpSecurityExceptionHandling ->
-                    httpSecurityExceptionHandling.authenticationEntryPoint(customAuthenticationEntryPoint))
+                    httpSecurityExceptionHandling.authenticationEntryPoint(authenticationEntryPoint))
             .sessionManagement(sessionManagement -> sessionManagement
                 .maximumSessions(1)
-                .sessionRegistry(sessionRegistry())
-                .expiredUrl("/login?expired"))
+                .sessionRegistry(sessionRegistry()))
             .logout(logout -> logout
-                .logoutRequestMatcher(new AntPathRequestMatcher("/auth/logout","GET"))
-                .addLogoutHandler(customLogoutHandler)
+                .logoutRequestMatcher(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/auth/logout"))
                 .invalidateHttpSession(true)
                 .clearAuthentication(true)
-                .logoutSuccessUrl("/logoutSuccess") //TODO 리다이렉트될 프론트 주소
+                .logoutSuccessHandler(logoutSuccessHandler)
             );
         return http.build();
     }
