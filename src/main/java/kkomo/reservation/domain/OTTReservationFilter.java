@@ -1,8 +1,8 @@
 package kkomo.reservation.domain;
 
+import kkomo.ott.domain.OTTIdAndProfileIds;
 import lombok.Getter;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,23 +25,5 @@ public class OTTReservationFilter {
             .toList();
         this.mine = Boolean.parseBoolean(mine);
         this.upcoming = Boolean.parseBoolean(upcoming);
-    }
-
-    public record OTTIdAndProfileIds(
-        Long ottId,
-        List<Long> profileIds
-    ) {
-
-        static OTTIdAndProfileIds from(final String param) {
-            final String[] params = param.split("_");
-            if (params.length != 1 && params.length != 2) {
-                throw new IllegalArgumentException("Invalid param: " + param);
-            }
-            final Long ottId = Long.parseLong(params[0]);
-            final List<Long> profileIds = Arrays.stream(params[1].split(","))
-                .map(Long::parseLong)
-                .toList();
-            return new OTTIdAndProfileIds(ottId, profileIds);
-        }
     }
 }
