@@ -1,8 +1,9 @@
 package kkomo.ott.repository;
 
-import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.BooleanBuilder;
 import kkomo.global.support.QueryDslSupport;
 import kkomo.ott.domain.OTT;
+import kkomo.ott.domain.OTTIdAndProfileIds;
 import kkomo.ott.domain.QOTT;
 import kkomo.ott.domain.QOTTProfile;
 import kkomo.reservation.domain.OTTReservationTime;
@@ -19,19 +20,37 @@ class OTTQueryDslRepository extends QueryDslSupport implements OTTQueryRepositor
     private static final QOTTReservation reservation = QOTTReservation.oTTReservation;
 
     @Override
-    public List<OTT> findAvailableBy(final Long ottId, final OTTReservationTime time) {
+    public List<OTT> findAvailableBy(
+        final List<OTTIdAndProfileIds> otts,
+        final OTTReservationTime time
+    ) {
         return queryFactory.select(ott)
-                .from(ott)
-                .join(ott.profiles, profile).fetchJoin()
-                .leftJoin(reservation).on(reservation.ott.eq(ott)
-                    .and(reservation.profile.eq(profile))
-                    .and(reservation.time.start.goe(time.getStart()))
-                    .and(reservation.time.end.loe(time.getEnd())))
-                .where(ottIdEq(ottId), reservation.id.isNull())
-                .fetch();
+            .from(ott)
+            .join(ott.profiles, profile).fetchJoin()
+            .leftJoin(reservation).on(reservation.ott.eq(ott)
+                .and(reservation.profile.eq(profile))
+                .and(reservation.time.start.goe(time.getStart()))
+                .and(reservation.time.end.loe(time.getEnd())))
+            .where(ottIdEqAndProfileIdsInOr(otts))
+            .fetch();
     }
 
-    private BooleanExpression ottIdEq(final Long ottId) {
-        return ottId == null ? null : ott.id.eq(ottId);
+    private BooleanBuilder ottIdEqAndProfileIdsInOr(final List<OTTIdAndProfileIds> otts) {
+        final BooleanBuilder builder = new BooleanBuilder();
+        otts.stream()
+            .map(this::ottIdEqAndProfileIds)
+            .forEach(builder::or);
+        return builder;
+    }
+
+    private BooleanBuilder ottIdEqAndProfileIds(final OTTIdAndProfileIds ottIdAndProfileIds) {
+        final BooleanBuilder builder = new BooleanBuilder();
+        final Long ottId = ottIdAndProfileIds.ottId();
+        final List<Long> profileIds = ottIdAndProfileIds.profileIds();
+        builder.and(ott.id.eq(ottId));
+        if (!profileIds.isEmpty()) {
+            builder.and(profile.id.in(profileIds));
+        }
+        return builder;
     }
 }

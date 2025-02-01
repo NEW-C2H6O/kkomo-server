@@ -41,15 +41,19 @@ public class OTTReservationCursorService {
                         final String member = content.getLast().member();
                         builder.member(member);
                     }
-                    case "ottId" -> {
-                        final Long ottId = content.getLast().ott().ottId();
-                        builder.ottId(ottId);
+                    case "ottName" -> {
+                        final String ottName = content.getLast().ott().name();
+                        builder.ottName(ottName);
                     }
                     case "createdAt" -> {
                         final LocalDateTime createdAt = content.getLast().createdAt();
                         builder.createdAt(createdAt);
                     }
-                };
+                    default -> {
+                        final Long reservationId = content.getLast().reservationId();
+                        builder.reservationId(reservationId);
+                    }
+                }
             });
         final OTTReservationCursor cursor = builder.build();
 

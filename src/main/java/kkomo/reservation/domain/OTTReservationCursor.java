@@ -10,19 +10,19 @@ import java.time.LocalDateTime;
 public class OTTReservationCursor extends Cursor {
 
     private final LocalDateTime createdAt;
-    private final Long ottId;
+    private final String ottName;
     private final String member;
 
     @Builder
     public OTTReservationCursor(
         final Long reservationId,
         final LocalDateTime createdAt,
-        final Long ottId,
+        final String ottName,
         final String member
     ) {
         super(reservationId);
         this.createdAt = createdAt;
-        this.ottId = ottId;
+        this.ottName = ottName;
         this.member = member;
     }
 }
