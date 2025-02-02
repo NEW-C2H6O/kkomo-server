@@ -39,7 +39,7 @@ class OTTReservationQueryDslRepository extends QueryDslSupport implements OTTRes
                 if (order.isAscending()) {
                     yield reservation.member.name.gt(cursor.getMember())
                         .or(reservation.member.name.eq(cursor.getMember())
-                            .and(reservation.id.gt(cursor.getId())));
+                            .and(reservation.id.lt(cursor.getId())));
                 }
                 yield reservation.member.name.lt(cursor.getMember())
                     .or(reservation.member.name.eq(cursor.getMember())
@@ -52,7 +52,7 @@ class OTTReservationQueryDslRepository extends QueryDslSupport implements OTTRes
                 if (order.isAscending()) {
                     yield reservation.ott.name.gt(cursor.getOttName())
                         .or(reservation.ott.name.eq(cursor.getOttName())
-                            .and(reservation.id.gt(cursor.getId())));
+                            .and(reservation.id.lt(cursor.getId())));
                 }
                 yield reservation.ott.name.lt(cursor.getOttName())
                     .or(reservation.ott.name.eq(cursor.getOttName())
@@ -65,7 +65,7 @@ class OTTReservationQueryDslRepository extends QueryDslSupport implements OTTRes
                 if (order.isAscending()) {
                     yield reservation.createdAt.gt(cursor.getCreatedAt())
                         .or(reservation.createdAt.eq(cursor.getCreatedAt())
-                            .and(reservation.id.gt(cursor.getId())));
+                            .and(reservation.id.lt(cursor.getId())));
                 }
                 yield reservation.createdAt.lt(cursor.getCreatedAt())
                     .or(reservation.createdAt.eq(cursor.getCreatedAt())
