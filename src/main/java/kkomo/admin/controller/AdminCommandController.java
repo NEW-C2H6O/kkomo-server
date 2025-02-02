@@ -1,7 +1,8 @@
 package kkomo.admin.controller;
 
 import kkomo.admin.controller.dto.request.AssignAdminRequest;
-import kkomo.admin.controller.dto.request.PublishActivityCodeRequest;
+import kkomo.admin.controller.dto.response.ActivityCodeResponse;
+import kkomo.admin.domain.ActivityCode;
 import kkomo.admin.service.AdminCommandService;
 import kkomo.global.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -19,12 +20,10 @@ public class AdminCommandController {
     private final AdminCommandService adminCommandService;
 
     @PostMapping("/activity-code")
-    public ResponseEntity<ApiSuccessResult<?>> publishActivityCode(
-        @RequestBody final PublishActivityCodeRequest request
-    ) {
-        final String codeValue = request.code();
-        adminCommandService.publishActivityCode(codeValue);
-        return ApiResponse.success(HttpStatus.OK);
+    public ResponseEntity<ApiSuccessResult<ActivityCodeResponse>> publishActivityCode() {
+        final ActivityCode code = adminCommandService.publishActivityCode();
+        final ActivityCodeResponse response = new ActivityCodeResponse(code.getValue());
+        return ApiResponse.success(HttpStatus.CREATED, response);
     }
 
     @PostMapping

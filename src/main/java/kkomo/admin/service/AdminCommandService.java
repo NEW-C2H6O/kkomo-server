@@ -1,9 +1,6 @@
 package kkomo.admin.service;
 
-import kkomo.admin.domain.ActivityCode;
-import kkomo.admin.domain.AdminAssigner;
-import kkomo.admin.domain.AdminRemover;
-import kkomo.admin.domain.MemberDeactivator;
+import kkomo.admin.domain.*;
 import kkomo.admin.repository.ActivityCodeRepository;
 import kkomo.auth.UserPrincipal;
 import lombok.RequiredArgsConstructor;
@@ -23,16 +20,15 @@ public class AdminCommandService {
     private final AdminAssigner adminAssigner;
     private final AdminRemover adminRemover;
     private final MemberDeactivator memberDeactivator;
+    private final ActivityCodeGenerator activityCodeGenerator;
 
     @Transactional
-    public void publishActivityCode(final String codeValue) {
-        if (activityCodeRepository.existsByValue(codeValue)) {
-            throw new IllegalArgumentException("이미 사용 중인 코드입니다.");
-        }
-        final ActivityCode activityCode = ActivityCode.from(codeValue);
-        activityCodeRepository.save(activityCode);
+    public ActivityCode publishActivityCode() {
+        final ActivityCode code = activityCodeGenerator.generate();
+        activityCodeRepository.save(code);
         memberDeactivator.deactivateAll();
         invalidateAllSessions();
+        return code;
     }
 
     @Async
