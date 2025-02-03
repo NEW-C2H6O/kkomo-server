@@ -1,6 +1,8 @@
 package kkomo.admin.controller;
 
+import kkomo.admin.controller.dto.response.ActivityCodeResponse;
 import kkomo.admin.controller.dto.response.MemberResponse;
+import kkomo.admin.domain.ActivityCode;
 import kkomo.admin.service.AdminQueryService;
 import kkomo.global.ApiResponse;
 import kkomo.global.support.Cursor;
@@ -37,6 +39,13 @@ public class AdminQueryController {
         @CursorDefault @PageableDefault final CursorPageable<Cursor> pageable
     ) {
         final SliceResponse<MemberResponse> response = adminQueryService.readMembersBy(pageable);
+        return ApiResponse.success(HttpStatus.OK, response);
+    }
+
+    @GetMapping("/activity-code")
+    public ResponseEntity<ApiSuccessResult<ActivityCodeResponse>> getLatestActivityCode() {
+        final ActivityCode code = adminQueryService.getLatestActivityCode();
+        final ActivityCodeResponse response = new ActivityCodeResponse(code.getValue());
         return ApiResponse.success(HttpStatus.OK, response);
     }
 }
