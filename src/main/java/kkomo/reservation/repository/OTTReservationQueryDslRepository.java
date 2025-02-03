@@ -13,6 +13,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -28,64 +29,91 @@ class OTTReservationQueryDslRepository extends QueryDslSupport implements OTTRes
         if (cursor == null) {
             return null;
         }
-        if (cursor.getId() == null) {
+
+        final Long reservationId = cursor.getId();
+
+        if (reservationId == null) {
             throw new IllegalArgumentException("id cursor is null");
         }
+
         return switch (order.getProperty()) {
-            case "member" -> {
-                if (cursor.getMember() == null) {
+            case OTTReservationSortOrder.MEMBER -> {
+                final String member = cursor.getMember();
+
+                if (member == null) {
                     throw new IllegalArgumentException("member cursor is null");
                 }
+
                 if (order.isAscending()) {
-                    yield reservation.member.name.gt(cursor.getMember())
-                        .or(reservation.member.name.eq(cursor.getMember())
-                            .and(reservation.id.lt(cursor.getId())));
+                    yield reservation.member.name.gt(member)
+                        .or(reservation.member.name.eq(member)
+                            .and(reservation.id.gt(reservationId)));
                 }
-                yield reservation.member.name.lt(cursor.getMember())
-                    .or(reservation.member.name.eq(cursor.getMember())
-                        .and(reservation.id.lt(cursor.getId())));
+
+                yield reservation.member.name.lt(member)
+                    .or(reservation.member.name.eq(member)
+                        .and(reservation.id.gt(reservationId)));
             }
-            case "ottName" -> {
-                if (cursor.getOttName() == null) {
+            case OTTReservationSortOrder.OTT_NAME -> {
+                final String ottName = cursor.getOttName();
+
+                if (ottName == null) {
                     throw new IllegalArgumentException("ottName cursor is null");
                 }
+
                 if (order.isAscending()) {
-                    yield reservation.ott.name.gt(cursor.getOttName())
-                        .or(reservation.ott.name.eq(cursor.getOttName())
-                            .and(reservation.id.lt(cursor.getId())));
+                    yield reservation.ott.name.gt(ottName)
+                        .or(reservation.ott.name.eq(ottName)
+                            .and(reservation.id.gt(reservationId)));
                 }
-                yield reservation.ott.name.lt(cursor.getOttName())
-                    .or(reservation.ott.name.eq(cursor.getOttName())
-                        .and(reservation.id.lt(cursor.getId())));
+
+                yield reservation.ott.name.lt(ottName)
+                    .or(reservation.ott.name.eq(ottName)
+                        .and(reservation.id.gt(reservationId)));
             }
-            case "createdAt" -> {
-                if (cursor.getCreatedAt() == null) {
-                    throw new IllegalArgumentException("createdAt cursor is null");
+            case OTTReservationSortOrder.START_TIME -> {
+                final LocalDateTime startTime = cursor.getStartTime();
+
+                if (startTime == null) {
+                    throw new IllegalArgumentException("start time cursor is null");
                 }
+
                 if (order.isAscending()) {
-                    yield reservation.createdAt.gt(cursor.getCreatedAt())
-                        .or(reservation.createdAt.eq(cursor.getCreatedAt())
-                            .and(reservation.id.lt(cursor.getId())));
+                    yield reservation.time.start.gt(startTime)
+                        .or(reservation.time.start.eq(startTime)
+                            .and(reservation.id.gt(reservationId)));
                 }
-                yield reservation.createdAt.lt(cursor.getCreatedAt())
-                    .or(reservation.createdAt.eq(cursor.getCreatedAt())
-                        .and(reservation.id.lt(cursor.getId())));
+
+                yield reservation.time.start.gt(startTime)
+                    .or(reservation.time.start.eq(startTime)
+                        .and(reservation.id.gt(reservationId)));
             }
             default -> {
                 if (order.isAscending()) {
-                    yield reservation.id.gt(cursor.getId());
+                    yield reservation.id.gt(reservationId);
                 }
-                yield reservation.id.lt(cursor.getId());
+
+                yield reservation.id.lt(reservationId);
             }
         };
+    }
+
+    private OrderSpecifier<?>[] orderSpecifiers(final Sort.Order order) {
+        final OrderSpecifier<?>[] specifiers = new OrderSpecifier[2];
+        specifiers[0] = orderSpecifier(order);
+        if (specifiers[0].getTarget() == reservation.id) {
+            return new OrderSpecifier[] { specifiers[0] };
+        }
+        specifiers[1] = reservation.id.asc();
+        return specifiers;
     }
 
     private OrderSpecifier<?> orderSpecifier(final Sort.Order order) {
         final boolean isAscending = order.isAscending();
         return switch (order.getProperty()) {
-            case "member" -> isAscending ? reservation.member.name.asc() : reservation.member.name.desc();
-            case "ottName" -> isAscending ? reservation.ott.name.asc() : reservation.ott.name.desc();
-            case "createdAt" -> isAscending ? reservation.time.start.asc() : reservation.time.start.desc();
+            case OTTReservationSortOrder.MEMBER -> isAscending ? reservation.member.name.asc() : reservation.member.name.desc();
+            case OTTReservationSortOrder.OTT_NAME -> isAscending ? reservation.ott.name.asc() : reservation.ott.name.desc();
+            case OTTReservationSortOrder.START_TIME -> isAscending ? reservation.time.start.asc() : reservation.time.start.desc();
             default -> isAscending ? reservation.id.asc() : reservation.id.desc();
         };
     }
@@ -123,6 +151,13 @@ class OTTReservationQueryDslRepository extends QueryDslSupport implements OTTRes
         return builder;
     }
 
+    private BooleanExpression reservationTimeEq(final LocalDate date) {
+        final LocalDateTime dateTime = date.atStartOfDay();
+        final LocalDateTime nextDateTime = date.plusDays(1).atStartOfDay();
+        return reservation.time.start.goe(dateTime)
+            .and(reservation.time.end.lt(nextDateTime));
+    }
+
     @Override
     public Slice<GetOTTReservationResponse> findBy(
         final Long memberId,
@@ -137,7 +172,10 @@ class OTTReservationQueryDslRepository extends QueryDslSupport implements OTTRes
             final LocalDateTime now = LocalDateTime.now();
             query.where(reservation.time.end.goe(now));
         }
-        query.where(reservationOttIdEqAndProfileIdsInOr(filter.getOtts()));
+        query.where(
+            reservationTimeEq(filter.getDate()),
+            reservationOttIdEqAndProfileIdsInOr(filter.getOtts())
+        );
 
         final OTTReservationCursor cursor = pageable.getCursor();
         final Sort.Order order = pageable.getSort()
@@ -147,7 +185,7 @@ class OTTReservationQueryDslRepository extends QueryDslSupport implements OTTRes
         final int pageSize = pageable.getPageSize();
 
         query.where(cursorBooleanExpression(cursor, order))
-            .orderBy(orderSpecifier(order))
+            .orderBy(orderSpecifiers(order))
             .limit(pageSize + 1);
 
         final List<GetOTTReservationResponse> content = query.fetch()

@@ -3,6 +3,7 @@ package kkomo.reservation.repository;
 import kkomo.global.support.Base64Encoder;
 import kkomo.reservation.controller.dto.response.GetOTTReservationResponse;
 import kkomo.reservation.domain.OTTReservationCursor;
+import kkomo.reservation.domain.OTTReservationSortOrder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Slice;
@@ -37,17 +38,17 @@ public class OTTReservationCursorService {
             .map(Sort.Order::getProperty)
             .ifPresent(property -> {
                 switch (property) {
-                    case "member" -> {
+                    case OTTReservationSortOrder.MEMBER -> {
                         final String member = content.getLast().member();
                         builder.member(member);
                     }
-                    case "ottName" -> {
+                    case OTTReservationSortOrder.OTT_NAME -> {
                         final String ottName = content.getLast().ott().name();
                         builder.ottName(ottName);
                     }
-                    case "createdAt" -> {
-                        final LocalDateTime createdAt = content.getLast().createdAt();
-                        builder.createdAt(createdAt);
+                    case OTTReservationSortOrder.START_TIME -> {
+                        final LocalDateTime startTime = content.getLast().time().start();
+                        builder.startTime(startTime);
                     }
                     default -> {
                         final Long reservationId = content.getLast().reservationId();
