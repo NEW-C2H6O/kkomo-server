@@ -1,6 +1,8 @@
 package kkomo.admin.service;
 
 import kkomo.admin.controller.dto.response.MemberResponse;
+import kkomo.admin.domain.ActivityCode;
+import kkomo.admin.domain.ActivityCodeReader;
 import kkomo.global.support.Cursor;
 import kkomo.global.support.CursorPageable;
 import kkomo.global.support.SliceResponse;
@@ -20,6 +22,8 @@ public class AdminQueryService {
     private final MemberResponseCursorService cursorService;
     private final MemberQueryRepository memberQueryRepository;
 
+    private final ActivityCodeReader activityCodeReader;
+
     public SliceResponse<MemberResponse> readAdminsBy(
         final CursorPageable<? extends Cursor> pageable
     ) {
@@ -36,5 +40,9 @@ public class AdminQueryService {
         final Slice<MemberResponse> response = memberQueryRepository.findByRole(null, pageable);
         final String cursor = cursorService.encodeCursor(response);
         return SliceResponse.of(response, cursor);
+    }
+
+    public ActivityCode getLatestActivityCode() {
+        return activityCodeReader.readLatest();
     }
 }
