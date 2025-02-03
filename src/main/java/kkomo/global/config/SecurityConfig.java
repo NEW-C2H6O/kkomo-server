@@ -40,7 +40,8 @@ public class SecurityConfig {
 
     public static final List<String> clients = List.of(
         "http://localhost:3000",
-        "https://kkomo.site"
+        "https://kkomo.site",
+        "https://new-c2h6o.github.io"
     );
 
     @Bean
