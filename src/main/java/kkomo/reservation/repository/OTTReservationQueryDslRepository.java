@@ -152,6 +152,9 @@ class OTTReservationQueryDslRepository extends QueryDslSupport implements OTTRes
     }
 
     private BooleanExpression reservationTimeEq(final LocalDate date) {
+        if (date == null) {
+            return null;
+        }
         final LocalDateTime dateTime = date.atStartOfDay();
         final LocalDateTime nextDateTime = date.plusDays(1).atStartOfDay();
         return reservation.time.start.goe(dateTime)

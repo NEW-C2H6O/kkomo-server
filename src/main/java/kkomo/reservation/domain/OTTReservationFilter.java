@@ -28,7 +28,6 @@ public class OTTReservationFilter {
             .toList();
         this.mine = Boolean.parseBoolean(mine);
         this.upcoming = Boolean.parseBoolean(upcoming);
-        this.date = Optional.ofNullable(date)
-            .orElseGet(LocalDate::now);
+        this.date = date;
     }
 }
