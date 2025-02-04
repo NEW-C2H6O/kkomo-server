@@ -10,11 +10,21 @@ import java.time.LocalDateTime;
 
 public record GetOTTReservationResponse(
     Long reservationId,
-    String member,
+    MemberResponse member,
     OTTResponse ott,
     OTTReservationTimeDto time,
     LocalDateTime createdAt
 ) {
+
+    public record MemberResponse(
+        Long memberId,
+        String name
+    ) {
+
+        static MemberResponse of(final Long memberId, final String name) {
+            return new MemberResponse(memberId, name);
+        }
+    }
 
     public record OTTResponse(
         Long ottId,
@@ -34,7 +44,10 @@ public record GetOTTReservationResponse(
     public static GetOTTReservationResponse from(final OTTReservation reservation) {
         return new GetOTTReservationResponse(
             reservation.getId(),
-            reservation.getMember().getName(),
+            MemberResponse.of(
+                reservation.getMember().getId(),
+                reservation.getMember().getName()
+            ),
             OTTResponse.of(reservation.getOtt(), reservation.getProfile()),
             OTTReservationTimeDto.from(reservation.getTime()),
             reservation.getCreatedAt()

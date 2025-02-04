@@ -39,7 +39,7 @@ public class OTTReservationCursorService {
             .ifPresent(property -> {
                 switch (property) {
                     case OTTReservationSortOrder.MEMBER -> {
-                        final String member = content.getLast().member();
+                        final String member = content.getLast().member().name();
                         builder.member(member);
                     }
                     case OTTReservationSortOrder.OTT_NAME -> {
