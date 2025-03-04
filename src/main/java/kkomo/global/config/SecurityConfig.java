@@ -79,6 +79,10 @@ public class SecurityConfig {
                 .anyRequest()
                 .authenticated()
             )
+            .exceptionHandling(exceptionHandling ->
+                    exceptionHandling
+                            .accessDeniedPage("/access-denied")
+            )
             .oauth2Login(oauth2 -> oauth2
                 .redirectionEndpoint(redirection -> redirection
                     .baseUri("/login/oauth2/code/kakao"))
