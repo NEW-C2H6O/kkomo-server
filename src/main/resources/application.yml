@@ -11,6 +11,12 @@ spring:
   config:
     activate:
       on-profile: local
+  thymeleaf:
+    prefix: classpath:/templates/
+    check-template-location: true
+    suffix: .html
+    mode: HTML
+    cache: false
 
 logging:
   level:
@@ -21,6 +27,13 @@ spring:
   config:
     activate:
       on-profile: main
+      spring:
+  thymeleaf:
+    prefix: classpath:templates/thymeleaf/
+    check-template-location: true
+    suffix: .html
+    mode: HTML
+    cache: true
 
 logging:
   level:
