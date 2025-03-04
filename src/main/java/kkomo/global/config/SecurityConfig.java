@@ -72,7 +72,8 @@ public class SecurityConfig {
                 )
                 .hasAnyRole("ACTIVATED", "ADMIN")
                 .requestMatchers(
-                    "/admin/**"
+                    "/admin/**",
+                    "/admin-page"
                 )
                 .hasRole("ADMIN")
                 .anyRequest()
