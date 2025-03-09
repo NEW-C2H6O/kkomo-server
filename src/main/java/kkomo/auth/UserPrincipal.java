@@ -40,7 +40,7 @@ public class UserPrincipal implements OAuth2User {
     }
 
     public boolean isActivated() {
-        return member.isActivated();
+        return member.isActivated() && !member.isAdmin();
     }
 
     public Long getId() {
