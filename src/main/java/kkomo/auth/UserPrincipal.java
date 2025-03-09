@@ -43,6 +43,10 @@ public class UserPrincipal implements OAuth2User {
         return member.isActivated();
     }
 
+    public boolean isAdmin() {
+        return member.isAdmin();
+    }
+
     public Long getId() {
         return member.getId();
     }

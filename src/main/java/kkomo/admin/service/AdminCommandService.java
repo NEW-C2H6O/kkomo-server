@@ -37,7 +37,8 @@ public class AdminCommandService {
             .stream()
             .filter(UserPrincipal.class::isInstance)
             .map(UserPrincipal.class::cast)
-            .filter(UserPrincipal::isActivated)
+            .filter(principal ->
+                    principal.isActivated() && !principal.isAdmin())
             .forEach(principal ->
                 sessionRegistry.getAllSessions(principal, false)
                     .forEach(SessionInformation::expireNow));
