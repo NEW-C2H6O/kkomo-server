@@ -72,11 +72,16 @@ public class SecurityConfig {
                 )
                 .hasAnyRole("ACTIVATED", "ADMIN")
                 .requestMatchers(
-                    "/admin/**"
+                    "/admin/**",
+                    "/admin-page"
                 )
                 .hasRole("ADMIN")
                 .anyRequest()
                 .authenticated()
+            )
+            .exceptionHandling(exceptionHandling ->
+                    exceptionHandling
+                            .accessDeniedPage("/access-denied")
             )
             .oauth2Login(oauth2 -> oauth2
                 .redirectionEndpoint(redirection -> redirection

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Denied</title>
+    <link th:href="@{/css/bootstrap.min.css}" href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .denied-container {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #ff5c8e, #ff7b00);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .denied-content {
+            text-align: center;
+            color: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            background-color: rgba(0, 0, 0, 0.6);
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .denied-content h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .denied-content p {
+            font-size: 1.25rem;
+            margin-bottom: 40px;
+        }
+
+        .btn-home {
+            padding: 12px 30px;
+            font-size: 1.125rem;
+            border-radius: 50px;
+            background-color: #fff;
+            color: #ff5c8e;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-home:hover {
+            background-color: #ff5c8e;
+            color: #fff;
+            transform: translateY(-5px);
+        }
+
+        .btn-home:active {
+            transform: translateY(2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="denied-container">
+        <div class="denied-content">
+            <h1>🚫 권한 없음!</h1>
+            <p>해당 페이지에 접근할 권한이 없습니다. 관리자에게 문의하세요.</p>
+            <a href="/v1" class="btn btn-home">홈으로 돌아가기</a>
+        </div>
+    </div>
+</body>
+</html>
