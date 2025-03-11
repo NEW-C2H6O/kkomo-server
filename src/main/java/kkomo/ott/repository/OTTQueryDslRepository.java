@@ -1,6 +1,8 @@
 package kkomo.ott.repository;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
 import kkomo.global.support.QueryDslSupport;
 import kkomo.ott.domain.OTT;
 import kkomo.ott.domain.OTTIdAndProfileIds;
@@ -27,12 +29,17 @@ class OTTQueryDslRepository extends QueryDslSupport implements OTTQueryRepositor
         return queryFactory.select(ott)
             .from(ott)
             .join(ott.profiles, profile).fetchJoin()
-            .leftJoin(reservation).on(reservation.ott.eq(ott)
-                .and(reservation.profile.eq(profile))
-                .and(reservation.time.start.goe(time.getStart()))
-                .and(reservation.time.end.loe(time.getEnd())))
-            .where(ottIdEqAndProfileIdsInOr(otts))
+            .where(ottIdEqAndProfileIdsInOr(otts), notReservedAt(time))
             .fetch();
+    }
+
+    private BooleanExpression notReservedAt(final OTTReservationTime time) {
+        return profile.id.notIn(
+            JPAExpressions.select(reservation.profile.id)
+                .from(reservation)
+                .where(reservation.time.start.goe(time.getStart())
+                    .and(reservation.time.end.loe(time.getEnd())))
+        );
     }
 
     private BooleanBuilder ottIdEqAndProfileIdsInOr(final List<OTTIdAndProfileIds> otts) {
