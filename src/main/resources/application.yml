@@ -5,12 +5,6 @@ spring:
       - app-config.yml
       - persistence-config.yml
       - security-config.yml
-
----
-spring:
-  config:
-    activate:
-      on-profile: local
   thymeleaf:
     prefix: classpath:/templates/
     check-template-location: true
@@ -18,6 +12,11 @@ spring:
     mode: HTML
     cache: false
 
+---
+spring:
+  config:
+    activate:
+      on-profile: local
 logging:
   level:
     kkomo: DEBUG
@@ -27,13 +26,6 @@ spring:
   config:
     activate:
       on-profile: main
-      spring:
-  thymeleaf:
-    prefix: classpath:templates/thymeleaf/
-    check-template-location: true
-    suffix: .html
-    mode: HTML
-    cache: true
 
 logging:
   level:
