@@ -37,11 +37,11 @@ public class SecurityConfig {
     private final AuthorizationRequestRedirectResolver authorizationRequestRedirectResolver;
     private final ResponseEntityAuthenticationEntryPoint authenticationEntryPoint;
 
-
     public static final List<String> clients = List.of(
         "http://localhost:3000",
         "https://kkomo.site",
-        "https://new-c2h6o.github.io"
+        "https://new-c2h6o.github.io",
+        "https://api.kkomo.site"
     );
 
     @Bean
@@ -62,8 +62,7 @@ public class SecurityConfig {
                     "/ws/**",
                     "/oauth2/**",
                     "/auth/**",
-                    "/login",
-                    "/logoutSuccess"
+                    "/login"
                 )
                 .permitAll()
                 .requestMatchers(
@@ -80,8 +79,8 @@ public class SecurityConfig {
                 .authenticated()
             )
             .exceptionHandling(exceptionHandling ->
-                    exceptionHandling
-                            .accessDeniedPage("/access-denied")
+                exceptionHandling
+                    .accessDeniedPage("/access-denied")
             )
             .oauth2Login(oauth2 -> oauth2
                 .redirectionEndpoint(redirection -> redirection
